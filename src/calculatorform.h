@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2016 The Qt Company Ltd.
+** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -48,15 +48,25 @@
 **
 ****************************************************************************/
 
-#include "calculatorform.h"
-#include <QApplication>
+#ifndef CALCULATORFORM_H
+#define CALCULATORFORM_H
 
 //! [0]
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    CalculatorForm calculator;
-    calculator.show();
-    return app.exec();
-}
+#include "ui_calculatorform.h"
 //! [0]
+
+//! [1]
+class CalculatorForm : public QWidget, private Ui::CalculatorForm
+{
+    Q_OBJECT
+
+public:
+    explicit CalculatorForm(QWidget *parent = nullptr);
+
+private slots:
+    void on_inputSpinBox1_valueChanged(int value);
+    void on_inputSpinBox2_valueChanged(int value);
+};
+//! [1]
+
+#endif

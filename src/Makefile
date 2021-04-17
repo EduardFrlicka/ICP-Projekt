@@ -26,6 +26,7 @@ SRC=.
 # Compiler
 CC=g++
 MOC=moc-qt5
+UIC=uic-qt5
 
 # Suffix of files to compile (E.x.: c, cpp, c++)
 SUFFIX=cpp
@@ -42,21 +43,22 @@ SRC_DIRECTORIES=$(shell find $(SRC) -type d)
 
 vpath %.$(SUFFIX) $(SRC_DIRECTORIES)
 vpath %.h $(SRC_DIRECTORIES)
+vpath %.ui $(SRC_DIRECTORIES)
 
 # Adding -I 
-IFLAGS := $(foreach DIR, $(SRC_DIRECTORIES),-I $(DIR))
+IFLAGS := $(foreach DIR, $(SRC_DIRECTORIES),-I $(DIR)) -I$(OBJ)
 
 SOURCES 	:= $(foreach DIR,$(SRC_DIRECTORIES),$(notdir $(wildcard $(DIR)/*.$(SUFFIX))))
 OBJECTS 	:= $(patsubst %.$(SUFFIX),$(OBJ)/%.o,$(SOURCES))
 HEADERS 	:= $(foreach DIR,$(SRC_DIRECTORIES),$(notdir $(wildcard $(DIR)/*.h)))
 OBJECTS 	+= $(patsubst %.h, $(OBJ)/%.h.o,$(HEADERS))
-
+UI  		:= $(foreach DIR,$(SRC_DIRECTORIES),$(notdir $(wildcard $(DIR)/*.ui)))
+UI_H		:= $(patsubst %.ui, $(OBJ)/ui_%.h,$(UI))
 
 # =========================================================================
 # Functions
 
 # checks if dir exists, then creates whole path
-check_dir = @if [ ! -d $1 ]; then mkdir -p $1; echo "Created directory: $1"; fi 
 
 
 # =========================================================================
@@ -72,20 +74,23 @@ run: $(BINARY_PATH)
 	./$(BINARY_PATH)
 
 $(BINARY_PATH) : $(OBJECTS)
-	$(call check_dir,$(@D))
+	@mkdir -p $(@D)
 	$(CC)  $(OBJECTS) -o $@ $(LFLAGS)
 
 $(OBJ)/%.h.cpp: %.h
-	$(call check_dir,$(@D))
+	@mkdir -p $(@D)
 	$(MOC) $< -o $@
 
 $(OBJ)/%.h.o: $(OBJ)/%.h.cpp
-	$(call check_dir,$(@D))
-	$(CC)  $< -c -o $@ $(CFLAGS)
+	@mkdir -p $(@D)
+	$(CC)  $< -c -o $@ $(CFLAGS) -I$(OBJ)
 
+$(OBJ)/ui_%.h: %.ui
+	@mkdir -p $(@D)
+	$(UIC) $< -o $@
 
-$(OBJ)/%.o: %.$(SUFFIX) $(HEADERS) 
-	$(call check_dir,$(@D))
+$(OBJ)/%.o: %.$(SUFFIX) $(HEADERS) $(UI_H)
+	@mkdir -p $(@D)
 	$(CC)  $< -c -o $@ $(CFLAGS) $(IFLAGS)
 
 
@@ -93,7 +98,8 @@ source:
 	@echo "Source_Folders   : " $(SRC_DIRECTORIES)
 	@echo "Sources          : " $(SOURCES)
 	@echo "Headers          : " $(HEADERS)
-	@echo "Objects          : " $(OBJECTS)
+	@echo "UI               : " $(UI)
+#	@echo "Objects          : " $(OBJECTS)
 
 
 # =========================================================================

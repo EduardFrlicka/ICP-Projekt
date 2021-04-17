@@ -5,7 +5,7 @@
 # Names and Directories
 
 # Flags for compiling
-CFLAGS=-std=c++17 -Wall -Wextra -pedantic
+CFLAGS=-std=c++17 -Wall -Wextra -pedantic -fPIC
 CFLAGS+=$(shell pkg-config --cflags Qt5Widgets)
 
 LFLAGS=-std=c++11 -Wall -Wextra -pedantic

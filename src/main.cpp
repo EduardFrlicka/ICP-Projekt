@@ -52,8 +52,7 @@
 #include <QApplication>
 
 //! [0]
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     CalculatorForm calculator;
     calculator.show();

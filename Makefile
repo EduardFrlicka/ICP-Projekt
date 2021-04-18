@@ -8,7 +8,7 @@ all:
 	@cd $(SRC)/ && $(MAKE) --no-print-directory
 
 pack:
-	zip -r $(ZIP_NAME) $(SRC) Makefile README.txt
+	zip -r $(ZIP_NAME) $(SRC) Makefile README.txt $(DOC)
 
 %:
 	@cd $(SRC)/ && $(MAKE) --no-print-directory $@

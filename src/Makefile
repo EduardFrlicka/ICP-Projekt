@@ -4,12 +4,15 @@
 # =========================================================================
 # Names and Directories
 
-# Flags for compiling
-CFLAGS=-std=c++17 -Wall -Wextra -pedantic -fPIC
-CFLAGS+=$(shell pkg-config --cflags Qt5Widgets)
 
-LFLAGS=-std=c++11 -Wall -Wextra -pedantic
+# Flags for compiling
+CFLAGS=-std=c++17 -Wall -Wextra -pedantic -fPIC -fpermissive #-pthread
+CFLAGS+=$(shell pkg-config --cflags Qt5Widgets) 
+
+LFLAGS=-std=c++11 -Wall -Wextra -pedantic #-lGL -lpthread 
 LFLAGS+=$(shell pkg-config --libs Qt5Widgets)
+
+LIBRARIES:= -lpaho-mqtt3c -lpaho-mqtt3a -lpaho-mqttpp3
 
 # Name of target binary file
 BINARY_NAME=binary
@@ -55,14 +58,9 @@ OBJECTS 	+= $(patsubst %.h, $(OBJ)/%.h.o,$(HEADERS))
 UI  		:= $(foreach DIR,$(SRC_DIRECTORIES),$(notdir $(wildcard $(DIR)/*.ui)))
 UI_H		:= $(patsubst %.ui, $(OBJ)/ui_%.h,$(UI))
 
-# =========================================================================
-# Functions
-
-# checks if dir exists, then creates whole path
-
 
 # =========================================================================
-# Targets
+# Targetsl
 .PHONY:  all run clean cleanall source
 .SECONDARY:
 
@@ -75,7 +73,7 @@ run: $(BINARY_PATH)
 
 $(BINARY_PATH) : $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CC)  $(OBJECTS) -o $@ $(LFLAGS)
+	$(CC)  $(OBJECTS) $(LIBRARIES) -o $@ $(LFLAGS)
 
 $(OBJ)/%.h.cpp: %.h
 	@mkdir -p $(@D)
@@ -99,7 +97,7 @@ source:
 	@echo "Sources          : " $(SOURCES)
 	@echo "Headers          : " $(HEADERS)
 	@echo "UI               : " $(UI)
-#	@echo "Objects          : " $(OBJECTS)
+#	@echo "Objects          : " $(OBJECTS) $(UI_H)
 
 
 # =========================================================================

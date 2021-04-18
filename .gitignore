@@ -3,3 +3,5 @@ bin
 obj
 *.zip
 doc
+paho.mqtt.c
+paho.mqtt.cpp

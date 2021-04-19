@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>Mqtt_explorer</class>
+ <widget class="QWidget" name="Mqtt_explorer">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1655</width>
-    <height>1195</height>
+    <width>923</width>
+    <height>650</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>MQTT Explorer</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -32,7 +32,18 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,1">
            <item>
-            <widget class="QListWidget" name="listWidget"/>
+            <widget class="QListWidget" name="listWidget">
+             <item>
+              <property name="text">
+               <string>New Item</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>New Item</string>
+              </property>
+             </item>
+            </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -47,7 +58,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="send_btn">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -61,7 +72,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>But</string>
+                <string>Send</string>
                </property>
               </widget>
              </item>

@@ -9,6 +9,8 @@ Mqtt_explorer::Mqtt_explorer(QWidget *parent) : QWidget(parent) {
         this->serverAdress = dialog.serverAdress;
         client.create(serverAdress.toStdString(), clientName.toStdString());
     }
+    connect(&client, SIGNAL(getMessage(QString)), this,
+            SLOT(addMessage(QString)));
 }
 
 // SLOTS
@@ -17,6 +19,7 @@ void Mqtt_explorer::on_send_btn_clicked() {
     QListWidgetItem *item = new QListWidgetItem(textEdit->toPlainText());
     listWidget->addItem(item);
     listWidget->scrollToBottom();
+    client.sendMsg(textEdit->toPlainText().toStdString());
     textEdit->setText("");
 }
 

@@ -16,8 +16,9 @@ class Mqtt_explorer : public QWidget, private Ui::Mqtt_explorer {
     QString serverAdress;
     QString clientName;
     mqtt_client client;
-    void addMessage(QString msg);
 
+  public slots:
+    void addMessage(QString msg);
   private slots:
     void on_send_btn_clicked();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);

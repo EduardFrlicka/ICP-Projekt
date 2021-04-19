@@ -12,15 +12,21 @@
 #include <QMessageBox>
 
 using namespace std;
-class mqtt_client {
+class mqtt_client : public QWidget {
+    Q_OBJECT
 
   public:
     mqtt_client();
     ~mqtt_client();
     void create(string ADDRESS, string CLIENTID);
     void disconnect();
+    void sendMsg(std::string msg);
 
     mqtt::async_client *client;
+    mqtt::topic *topic;
+
+  signals:
+    void getMessage(QString message);
 };
 
 #endif

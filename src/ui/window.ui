@@ -32,18 +32,7 @@
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,1">
            <item>
-            <widget class="QListWidget" name="listWidget">
-             <item>
-              <property name="text">
-               <string>New Item</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>New Item</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="QListWidget" name="listWidget"/>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">

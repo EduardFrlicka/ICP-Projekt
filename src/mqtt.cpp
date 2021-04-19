@@ -5,10 +5,14 @@ mqtt_client::~mqtt_client(){};
 
 void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
 
-    client = new mqtt::async_client(ADDRESS, CLIENTID);
+    client = new mqtt::async_client(ADDRESS, CLIENTID,
+                                    mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder().clean_session().finalize();
-    connOpts.set_connect_timeout(1);
+    auto connOpts = mqtt::connect_options_builder()
+                        .keep_alive_interval(std::chrono::seconds(1))
+                        .mqtt_version(MQTTVERSION_5)
+                        .clean_start(true)
+                        .finalize();
 
     try {
         cout << "\nConnecting..." << endl;
@@ -32,11 +36,9 @@ void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
     // Set the callback for incoming messages
 
     client->set_message_callback([this](mqtt::const_message_ptr msg) {
-        std::cout << msg->get_payload_str() << std::endl;
-        emit this->getMessage(QString::fromStdString(msg->get_payload_str()));
+        emit this->getMessage(
+            QByteArray::fromStdString(msg->get_payload_str()));
     });
-    // We publish and subscribe to one topic,
-    // so a 'topic' object is helpful.
 
     const int QOS = 1;
     topic = new mqtt::topic{*client, "chat/1", QOS};
@@ -70,4 +72,4 @@ void mqtt_client::disconnect() {
     }
 }
 
-void mqtt_client::sendMsg(std::string msg) { topic->publish(msg); }
+void mqtt_client::sendMsg(QByteArray msg) { topic->publish(msg.toStdString()); }

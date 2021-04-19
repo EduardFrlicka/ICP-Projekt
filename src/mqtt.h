@@ -20,13 +20,13 @@ class mqtt_client : public QWidget {
     ~mqtt_client();
     void create(string ADDRESS, string CLIENTID);
     void disconnect();
-    void sendMsg(std::string msg);
+    void sendMsg(QByteArray msg);
 
     mqtt::async_client *client;
     mqtt::topic *topic;
 
   signals:
-    void getMessage(QString message);
+    void getMessage(QByteArray msg);
 };
 
 #endif

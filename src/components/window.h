@@ -7,6 +7,8 @@
 #include "server_dialog.h"
 #include "ui_window.h"
 #include <QWidget>
+#include <fstream>
+#include <iostream>
 
 class Mqtt_explorer : public QWidget, private Ui::Mqtt_explorer {
     Q_OBJECT
@@ -18,7 +20,7 @@ class Mqtt_explorer : public QWidget, private Ui::Mqtt_explorer {
     mqtt_client client;
 
   public slots:
-    void addMessage(QString msg);
+    void addMessage(QByteArray msg);
   private slots:
     void on_send_btn_clicked();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);

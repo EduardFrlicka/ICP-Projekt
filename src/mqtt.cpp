@@ -30,7 +30,9 @@ void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
 
     client->set_connection_lost_handler([](const std::string &) {
         std::cout << "*** Connection Lost  ***" << std::endl;
-        exit(2);
+        QMessageBox messageBox;
+        messageBox.critical(0, "Error", "pojebalo sa");
+        messageBox.setFixedSize(500, 200);
     });
 
     // Set the callback for incoming messages

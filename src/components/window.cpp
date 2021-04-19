@@ -16,14 +16,19 @@ Mqtt_explorer::Mqtt_explorer(QWidget *parent) : QWidget(parent) {
 // SLOTS
 
 void Mqtt_explorer::on_send_btn_clicked() {
-    QListWidgetItem *item = new QListWidgetItem(textEdit->toPlainText());
-    listWidget->scrollToBottom();
     QByteArray msg =
         QByteArray::fromStdString(textEdit->toPlainText().toStdString());
     msg.append((char)1);
-
     client.sendMsg(msg);
+
+    QListWidgetItem *item = new QListWidgetItem(textEdit->toPlainText());
+
+    auto brush = QBrush(Qt::gray);
+    item->setBackground(brush);
+    listWidget->addItem(item);
     textEdit->setText("");
+
+    listWidget->scrollToBottom();
 }
 
 void Mqtt_explorer::on_attachFile_btn_clicked() {
@@ -43,6 +48,17 @@ void Mqtt_explorer::on_attachFile_btn_clicked() {
         msg.append((char)0);
 
         client.sendMsg(msg);
+
+        QListWidgetItem *item = new QListWidgetItem("[ image file ]");
+
+        auto brush = QBrush(Qt::gray);
+        item->setBackground(brush);
+        msg.chop(0);
+        item->setData(Qt::UserRole, msg);
+        listWidget->addItem(item);
+        textEdit->setText("");
+
+        listWidget->scrollToBottom();
     }
 }
 

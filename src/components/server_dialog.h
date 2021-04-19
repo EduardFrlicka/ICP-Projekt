@@ -7,7 +7,7 @@ class ServerDialog : public QDialog, private Ui::ServerDialog {
     Q_OBJECT
 
   public:
-    ServerDialog(QWidget *parent = 0);
+    ServerDialog(QWidget *parent = nullptr);
     QString clientName;
     QString serverAdress;
 

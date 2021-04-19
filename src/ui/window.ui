@@ -77,7 +77,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="attachFile_btn">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -91,7 +91,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>But</string>
+                <string>Attach Image</string>
                </property>
               </widget>
              </item>

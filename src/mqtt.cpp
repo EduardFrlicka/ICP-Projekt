@@ -15,11 +15,8 @@ void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
                         .finalize();
 
     try {
-        cout << "\nConnecting..." << endl;
         mqtt::token_ptr conntok = client->connect(connOpts);
-        cout << "Waiting for the connection..." << endl;
         conntok->wait();
-        cout << "  ...OK" << endl;
 
     } catch (const mqtt::exception &exc) {
         QMessageBox messageBox;
@@ -28,11 +25,11 @@ void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
         exit(1);
     }
 
-    client->set_connection_lost_handler([](const std::string &) {
-        std::cout << "*** Connection Lost  ***" << std::endl;
+    client->set_connection_lost_handler([this](const std::string &) {
         QMessageBox messageBox;
-        messageBox.critical(0, "Error", "pojebalo sa");
+        messageBox.warning(0, "Warning", "connection lost...reconnect");
         messageBox.setFixedSize(500, 200);
+        this->client->reconnect();
     });
 
     // Set the callback for incoming messages

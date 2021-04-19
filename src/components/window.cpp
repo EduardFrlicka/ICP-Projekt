@@ -37,6 +37,11 @@ void Mqtt_explorer::on_attachFile_btn_clicked() {
 
 void Mqtt_explorer::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
 
+    if (item->data(Qt::UserRole).isNull()) {
+        std::cout << "Nema žiadne data v sebe" << std::endl;
+        return;
+    }
+
     ImageForm *image = new ImageForm();
     QPixmap img = item->data(Qt::UserRole).value<QPixmap>();
     image->setFixedHeight(img.height());

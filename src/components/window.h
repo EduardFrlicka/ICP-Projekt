@@ -10,17 +10,19 @@
 #include <fstream>
 #include <iostream>
 
+#define IMAGE_MSG (char)0
+#define STRING_MSG (char)1
+
 class Mqtt_explorer : public QWidget, private Ui::Mqtt_explorer {
     Q_OBJECT
 
   public:
     explicit Mqtt_explorer(QWidget *parent = nullptr);
-    QString serverAdress;
-    QString clientName;
     mqtt_client client;
 
   public slots:
-    void addMessage(QByteArray msg);
+    void addMessage(QByteArray msg, int myMessage = 0);
+
   private slots:
     void on_send_btn_clicked();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);

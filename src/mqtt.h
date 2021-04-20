@@ -11,20 +11,21 @@
 
 #include <QMessageBox>
 
-using namespace std;
+#define NO_LOCAL true
+#define QOS 1
+
 class mqtt_client : public QWidget {
     Q_OBJECT
 
   public:
     mqtt_client();
     ~mqtt_client();
-    void create(string ADDRESS, string CLIENTID);
+    void connect(std::string ADDRESS, std::string CLIENTID);
     void disconnect();
-    void sendMsg(QByteArray msg);
+
+    void sendMessage(QByteArray msg);
 
     mqtt::async_client *client;
-    mqtt::topic *topic;
-
   signals:
     void getMessage(QByteArray msg);
 };

@@ -3,21 +3,14 @@
 mqtt_client::mqtt_client(){};
 mqtt_client::~mqtt_client(){};
 
-void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
+void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
 
-    client = new mqtt::async_client(ADDRESS, CLIENTID,
-                                    mqtt::create_options(MQTTVERSION_5));
+    client = new mqtt::async_client(ADDRESS, CLIENTID, mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder()
-                        .keep_alive_interval(std::chrono::seconds(1))
-                        .mqtt_version(MQTTVERSION_5)
-                        .clean_start(true)
-                        .finalize();
+    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(1)).mqtt_version(MQTTVERSION_5).clean_start(true).finalize();
 
     try {
-        mqtt::token_ptr conntok = client->connect(connOpts);
-        conntok->wait();
-
+        client->connect(connOpts)->wait();
     } catch (const mqtt::exception &exc) {
         QMessageBox messageBox;
         messageBox.critical(0, "Error", exc.what());
@@ -26,43 +19,17 @@ void mqtt_client::create(std::string ADDRESS, std::string CLIENTID) {
     }
 
     client->set_connection_lost_handler([this](const std::string &) {
-        QMessageBox messageBox;
-        messageBox.warning(0, "Warning", "connection lost...reconnect");
-        messageBox.setFixedSize(500, 200);
-        this->client->reconnect();
+        this->client->reconnect()->wait();
+        std::cout << "Recconecting" << std::endl;
     });
 
-    // Set the callback for incoming messages
-
-    client->set_message_callback([this](mqtt::const_message_ptr msg) {
-        emit this->getMessage(
-            QByteArray::fromStdString(msg->get_payload_str()));
-    });
-
-    const int QOS = 1;
-    topic = new mqtt::topic{*client, "chat/1", QOS};
-
-    // Start the connection.
-
-    try {
-
-        std::cout << "Ok\nJoining the group..." << std::flush;
-        const bool NO_LOCAL = true;
-
-        auto subOpts = mqtt::subscribe_options(NO_LOCAL);
-        topic->subscribe(subOpts)->wait();
-        std::cout << "Ok" << std::endl;
-    } catch (const mqtt::exception &exc) {
-        std::cerr << "\nERROR: Unable to connect. " << exc.what() << std::endl;
-    }
+    client->set_message_callback([this](mqtt::const_message_ptr msg) { emit this->getMessage(QByteArray::fromStdString(msg->get_payload_str())); });
 }
 
 void mqtt_client::disconnect() {
 
     try {
-        cout << "\nDisconnecting..." << endl;
         client->disconnect()->wait();
-        cout << "  ...OK" << endl;
     } catch (const mqtt::exception &exc) {
         QMessageBox messageBox;
         messageBox.critical(0, "Error", exc.what());
@@ -71,4 +38,4 @@ void mqtt_client::disconnect() {
     }
 }
 
-void mqtt_client::sendMsg(QByteArray msg) { topic->publish(msg.toStdString()); }
+void mqtt_client::sendMessage(QByteArray msg) {}

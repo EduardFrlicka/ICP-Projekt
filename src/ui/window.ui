@@ -25,19 +25,47 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,3">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,3">
          <item>
-          <widget class="QTreeView" name="treeView"/>
+          <widget class="QTreeWidget" name="treeWidget">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="indentation">
+            <number>10</number>
+           </property>
+           <column>
+            <property name="text">
+             <string>Topics</string>
+            </property>
+            <property name="font">
+             <font>
+              <weight>50</weight>
+              <bold>false</bold>
+             </font>
+            </property>
+           </column>
+          </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,1">
            <item>
-            <widget class="QListWidget" name="listWidget"/>
+            <widget class="QListWidget" name="listWidget">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QTextEdit" name="textEdit">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -48,6 +76,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="send_btn">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -80,7 +111,7 @@
                 </size>
                </property>
                <property name="text">
-                <string>Attach Image</string>
+                <string>Send Image</string>
                </property>
               </widget>
              </item>

@@ -3,11 +3,9 @@
 
 ServerDialog::ServerDialog(QWidget *parent) : QDialog(parent) {
     setupUi(this);
-    serverAdressInput->setText("tcp://test.mosquitto.org:1883");
+    serverAdressInput->setText(DEFAULT_ADRESS);
 }
 
-void ServerDialog::on_buttonBox_accepted() {
-    this->clientName = clientNameInput->text();
-    this->serverAdress = serverAdressInput->text();
-}
-void ServerDialog::on_buttonBox_rejected() { exit(0); }
+QString ServerDialog::getServerAdress() { return serverAdressInput->text(); }
+
+QString ServerDialog::getClientId() { return clientNameInput->text(); }

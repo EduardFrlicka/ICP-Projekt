@@ -9,6 +9,6 @@ class ImageForm : public QWidget, private Ui::ImageForm {
 
   public:
     explicit ImageForm(QWidget *parent = nullptr);
-    void SetImage(QPixmap *picture);
+    void SetImage(QPixmap *image);
 };
 #endif

@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    Mqtt_explorer win;
+    window win;
     win.show();
     return app.exec();
 }

@@ -1,5 +1,4 @@
-#include "window.h"
-#include <QDialog>
+#include "server_dialog.h"
 
 ServerDialog::ServerDialog(QWidget *parent) : QDialog(parent) {
     setupUi(this);

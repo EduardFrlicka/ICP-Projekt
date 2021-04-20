@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Mqtt_explorer</class>
- <widget class="QWidget" name="Mqtt_explorer">
+ <class>window</class>
+ <widget class="QWidget" name="window">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
-    <height>650</height>
+    <width>900</width>
+    <height>501</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>500</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MQTT Explorer</string>
@@ -16,36 +22,53 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Tab 1</string>
+       <string>Dashboard</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,3">
          <item>
-          <widget class="QTreeWidget" name="treeWidget">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="indentation">
-            <number>10</number>
-           </property>
-           <column>
-            <property name="text">
-             <string>Topics</string>
-            </property>
-            <property name="font">
-             <font>
-              <weight>50</weight>
-              <bold>false</bold>
-             </font>
-            </property>
-           </column>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QTreeWidget" name="treeWidget">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="indentation">
+              <number>10</number>
+             </property>
+             <column>
+              <property name="text">
+               <string>Topics</string>
+              </property>
+              <property name="font">
+               <font>
+                <weight>50</weight>
+                <bold>false</bold>
+               </font>
+              </property>
+              <property name="textAlignment">
+               <set>AlignCenter</set>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="subscribe_btn">
+             <property name="text">
+              <string>Subsribe new topic</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,1">
@@ -57,6 +80,21 @@
              <property name="autoFillBackground">
               <bool>false</bool>
              </property>
+             <property name="isWrapping" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="resizeMode">
+              <enum>QListView::Fixed</enum>
+             </property>
+             <property name="viewMode">
+              <enum>QListView::ListMode</enum>
+             </property>
+             <property name="uniformItemSizes">
+              <bool>false</bool>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
             </widget>
            </item>
            <item>
@@ -64,7 +102,7 @@
              <item>
               <widget class="QTextEdit" name="textEdit">
                <property name="enabled">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="minimumSize">
                 <size>
@@ -77,7 +115,7 @@
              <item>
               <widget class="QPushButton" name="send_btn">
                <property name="enabled">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
@@ -98,6 +136,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="attachFile_btn">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
                  <horstretch>0</horstretch>
@@ -125,8 +166,9 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Tab 2</string>
+       <string>Widgets</string>
       </attribute>
+      <layout class="QGridLayout" name="gridLayout_3"/>
      </widget>
     </widget>
    </item>

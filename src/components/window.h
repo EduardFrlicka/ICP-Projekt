@@ -31,6 +31,8 @@ class window : public QWidget, private Ui::window {
     void addMessage(QByteArray msg, int myMessage = 0);
 
   private slots:
+    QTreeWidgetItem *findTopic(QString topicName);
+    QTreeWidgetItem *findTopicRecursive(QString topicName, int *i);
     void on_send_btn_clicked();
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);

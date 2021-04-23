@@ -112,15 +112,70 @@ void window::addMessage(QByteArray msg, int myMessage = 0) {
     listWidget->scrollToBottom();
 }
 
+QString getFullTopicName(QStringList list, int end) {
+    std::cout << "getfullTopicName " << end << std ::endl;
+    ;
+    QString res = "";
+    for (int i = 0; i <= end; i++)
+        res += "/" + list[i];
+
+    std::cout << "getfullTopicName end" << std ::endl;
+    return res;
+}
+
+QString getFullTopicName(QStringList list) {
+    return getFullTopicName(list, list.count() - 1);
+}
+
+QTreeWidgetItem *window::findTopic(QString topicName) {
+    QString server = QString::fromStdString(client.client->get_server_uri());
+
+    QStringList topicList = topicName.split('/');
+
+    auto leaf = topicList.last();
+
+    QList<QTreeWidgetItem *> find_res = treeWidget->findItems(leaf, Qt::MatchExactly | Qt::MatchRecursive);
+    for (auto child : find_res) {
+        QString child_path = child->data(0, Qt::UserRole).value<QString>();
+        std::cout << child_path.toStdString() << std::endl;
+        if (topicName == child_path)
+            return child;
+    }
+
+    return NULL;
+}
+
+QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
+    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    for (*i = topicList.count() - 1; *i >= 0; --*i) {
+        auto res = findTopic(getFullTopicName(topicList, *i));
+        if (res)
+            return res;
+    }
+    return NULL;
+}
+
 void window::addNewTopic(QString topicName) {
-
+    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    topicName = getFullTopicName(topicList);
     // home/kuchyna
+    int i;
+    QTreeWidgetItem *last = findTopicRecursive(topicName, &i);
+    i++;
+    std::cout << "add start: " << i << std::endl;
+    for (; i < topicList.count(); i++) {
+        auto new_topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicList[i]));
+        new_topic->setData(0, Qt::UserRole, getFullTopicName(topicList, i));
 
-    auto topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicName));
+        if (last != NULL)
+            last->addChild(new_topic);
+        else
+            treeWidget->addTopLevelItem(new_topic);
+        last = new_topic;
+    }
 
     //    treeWidget->findItems() takto najdeme item a ptm vieme appednut child tomu itemu
     //    tu su flagy na matchovanie stringov aby sme našli spravneho potmoka podla topicu ktorý chceme pridať a prípadne aby sa spravila nova hierarchia
-    treeWidget->addTopLevelItem(topic);
 }
 
 void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {

@@ -1,13 +1,15 @@
 #include "mqtt.h"
 
-mqtt_client::mqtt_client() {}
-mqtt_client::~mqtt_client() {}
+mqtt_client::mqtt_client() {
+}
+mqtt_client::~mqtt_client() {
+}
 
 void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
 
     client = new mqtt::async_client(ADDRESS, CLIENTID, mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(1)).mqtt_version(MQTTVERSION_5).clean_start(true).finalize();
+    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(10)).mqtt_version(MQTTVERSION_5).clean_start(true).finalize();
 
     try {
         client->connect(connOpts)->wait();
@@ -18,17 +20,11 @@ void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
         exit(1);
     }
 
-    client->set_connection_lost_handler([this](const std::string &) {
-        this->client->reconnect()->wait();
-        std::cout << "Recconecting" << std::endl;
-    });
+    client->set_connection_lost_handler([this](const std::string &) { this->client->reconnect()->wait(); });
 
-    client->set_message_callback([this](mqtt::const_message_ptr msg) {
-        std::cout << "Sprava dosla" << std::endl;
-        emit this->getMessage(QByteArray::fromStdString(msg->get_payload_str()));
-    });
+    client->set_message_callback([this](mqtt::const_message_ptr msg) { emit this->getMessage(QByteArray::fromStdString(msg->get_payload_str())); });
 
-    chooseTopic("chat");
+    this->subscribe("test");
 }
 
 void mqtt_client::disconnect() {
@@ -43,26 +39,22 @@ void mqtt_client::disconnect() {
     }
 }
 
-void mqtt_client::sendMessage(QByteArray msg) {
+void mqtt_client::sendMessage(std::string topic, QByteArray msg) {
     try {
-        this->topic->publish(msg.toStdString());
+        this->client->publish(topic, msg.toStdString());
     } catch (const mqtt::exception &exc) {
         std::cout << exc.what() << std::endl;
     }
 }
 
-void mqtt_client::chooseTopic(std::string name) {
-    auto subOpts = mqtt::subscribe_options(NO_LOCAL);
+int mqtt_client::subscribe(std::string topic) {
     try {
-        if (this->topic == nullptr) {
-            this->topic = new mqtt::topic{*(this->client), name, QOS};
-            this->topic->subscribe(subOpts)->wait();
-        } else {
-            delete this->topic;
-            this->topic = new mqtt::topic{*(this->client), name, QOS};
-            this->topic->subscribe(subOpts)->wait();
-        }
+        auto subOpts = mqtt::subscribe_options(NO_LOCAL);
+        auto tok = this->client->subscribe(topic, QOS, subOpts);
+        tok->wait();
+        return tok->get_return_code();
     } catch (const mqtt::exception &exc) {
-        std::cerr << "\nERROR: Unable to connect. " << exc.what() << std::endl;
+        std::cout << exc.what() << std::endl;
+        return 1;
     }
 }

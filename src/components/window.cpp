@@ -26,7 +26,7 @@ void window::on_send_btn_clicked() {
     QByteArray msg = QByteArray::fromStdString(message_data);
     msg.append(STRING_MSG);
 
-    client.sendMessage(msg);
+    client.sendMessage("test", msg);
     this->addMessage(msg, 1);
 
     textEdit->setText("");
@@ -50,7 +50,7 @@ void window::on_attachFile_btn_clicked() {
     // append byte to recognize type of message - image
     msg.append(IMAGE_MSG);
 
-    client.sendMessage(msg);
+    client.sendMessage("test", msg);
     this->addMessage(msg, 1);
 }
 
@@ -146,7 +146,7 @@ QTreeWidgetItem *window::findTopic(QString topicName) {
 }
 
 QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
-    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    QStringList topicList = topicName.split('/');
     for (*i = topicList.count() - 1; *i >= 0; --*i) {
         auto res = findTopic(getFullTopicName(topicList, *i));
         if (res)
@@ -156,7 +156,7 @@ QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
 }
 
 void window::addNewTopic(QString topicName) {
-    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    QStringList topicList = topicName.split('/');
     topicName = getFullTopicName(topicList);
     // home/kuchyna
     int i;

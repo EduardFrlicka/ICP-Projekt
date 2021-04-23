@@ -27,7 +27,7 @@ void window::on_send_btn_clicked() {
     msg.append(STRING_MSG);
 
     client.sendMessage(msg);
-    this->addMessage(msg, 1);
+    this->addMessage(msg);
 
     textEdit->setText("");
 }
@@ -51,7 +51,7 @@ void window::on_attachFile_btn_clicked() {
     msg.append(IMAGE_MSG);
 
     client.sendMessage(msg);
-    this->addMessage(msg, 1);
+    this->addMessage(msg);
 }
 
 void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
@@ -81,15 +81,15 @@ void window::on_subscribe_btn_clicked() {
 
 // CLASS FUNCTIONS
 
-void window::addMessage(QByteArray msg, int myMessage = 0) {
+void window::addMessage(QByteArray msg) {
     QListWidgetItem *item = new QListWidgetItem();
     QIcon icon = QIcon("./img/person.ico");
     item->setIcon(icon);
     item->setFlags(Qt::ItemIsEnabled);
 
-    if (myMessage) {
-        item->setBackground(Qt::gray);
-    }
+    // if (myMessage) {
+    //     item->setBackground(Qt::gray);
+    // }
 
     int msg_type = msg.back();
     msg.chop(1);
@@ -113,13 +113,9 @@ void window::addMessage(QByteArray msg, int myMessage = 0) {
 }
 
 QString getFullTopicName(QStringList list, int end) {
-    std::cout << "getfullTopicName " << end << std ::endl;
-    ;
     QString res = "";
     for (int i = 0; i <= end; i++)
-        res += "/" + list[i];
-
-    std::cout << "getfullTopicName end" << std ::endl;
+        res += (res=="" ? "" : "/") + list[i];
     return res;
 }
 
@@ -137,7 +133,7 @@ QTreeWidgetItem *window::findTopic(QString topicName) {
     QList<QTreeWidgetItem *> find_res = treeWidget->findItems(leaf, Qt::MatchExactly | Qt::MatchRecursive);
     for (auto child : find_res) {
         QString child_path = child->data(0, Qt::UserRole).value<QString>();
-        std::cout << child_path.toStdString() << std::endl;
+        std::cout << child_path.toStdString() << ":" << topicName.toStdString() << std::endl;
         if (topicName == child_path)
             return child;
     }
@@ -146,7 +142,7 @@ QTreeWidgetItem *window::findTopic(QString topicName) {
 }
 
 QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
-    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    QStringList topicList = topicName.split('/');
     for (*i = topicList.count() - 1; *i >= 0; --*i) {
         auto res = findTopic(getFullTopicName(topicList, *i));
         if (res)
@@ -156,13 +152,12 @@ QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
 }
 
 void window::addNewTopic(QString topicName) {
-    QStringList topicList = topicName.split('/', Qt::SkipEmptyParts);
+    QStringList topicList = topicName.split('/');
     topicName = getFullTopicName(topicList);
     // home/kuchyna
     int i;
     QTreeWidgetItem *last = findTopicRecursive(topicName, &i);
     i++;
-    std::cout << "add start: " << i << std::endl;
     for (; i < topicList.count(); i++) {
         auto new_topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicList[i]));
         new_topic->setData(0, Qt::UserRole, getFullTopicName(topicList, i));

@@ -77,6 +77,7 @@ void window::on_subscribe_btn_clicked() {
         return;
 
     addNewTopic(dialog.getTopicName());
+    client.subscribe(dialog.getTopicName().toStdString());
 }
 
 // CLASS FUNCTIONS
@@ -177,7 +178,4 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
     textEdit->setEnabled(1);
     send_btn->setEnabled(1);
     attachFile_btn->setEnabled(1);
-    // std::cout << item->text(0).toStdString()
-
-    // tu máme meno columnu na kliknutie a možme nastavit aktualny topic
 }

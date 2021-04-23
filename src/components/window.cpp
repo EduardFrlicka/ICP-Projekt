@@ -26,7 +26,7 @@ void window::on_send_btn_clicked() {
     QByteArray msg = QByteArray::fromStdString(message_data);
     msg.append(STRING_MSG);
 
-    client.sendMessage("test", msg);
+    client.sendMessage(msg);
     this->addMessage(msg, 1);
 
     textEdit->setText("");
@@ -50,7 +50,7 @@ void window::on_attachFile_btn_clicked() {
     // append byte to recognize type of message - image
     msg.append(IMAGE_MSG);
 
-    client.sendMessage("test", msg);
+    client.sendMessage(msg);
     this->addMessage(msg, 1);
 }
 
@@ -77,6 +77,7 @@ void window::on_subscribe_btn_clicked() {
         return;
 
     addNewTopic(dialog.getTopicName());
+    client.subscribe(dialog.getTopicName().toStdString());
 }
 
 // CLASS FUNCTIONS
@@ -182,7 +183,4 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
     textEdit->setEnabled(1);
     send_btn->setEnabled(1);
     attachFile_btn->setEnabled(1);
-    // std::cout << item->text(0).toStdString()
-
-    // tu máme meno columnu na kliknutie a možme nastavit aktualny topic
 }

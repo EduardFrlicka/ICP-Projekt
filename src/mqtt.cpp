@@ -23,25 +23,11 @@ void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
     client->set_connection_lost_handler([this](const std::string &) { this->client->reconnect()->wait(); });
 
     client->set_message_callback([this](mqtt::const_message_ptr msg) { emit this->getMessage(QByteArray::fromStdString(msg->get_payload_str())); });
-
-    this->subscribe("test");
 }
 
-void mqtt_client::disconnect() {
-
+void mqtt_client::sendMessage(QByteArray msg) {
     try {
-        client->disconnect()->wait();
-    } catch (const mqtt::exception &exc) {
-        QMessageBox messageBox;
-        messageBox.critical(0, "Error", exc.what());
-        messageBox.setFixedSize(500, 200);
-        exit(1);
-    }
-}
-
-void mqtt_client::sendMessage(std::string topic, QByteArray msg) {
-    try {
-        this->client->publish(topic, msg.toStdString());
+        this->client->publish(this->currentTopic, msg.toStdString());
     } catch (const mqtt::exception &exc) {
         std::cout << exc.what() << std::endl;
     }
@@ -56,5 +42,21 @@ int mqtt_client::subscribe(std::string topic) {
     } catch (const mqtt::exception &exc) {
         std::cout << exc.what() << std::endl;
         return 1;
+    }
+}
+
+void mqtt_client::setCurrentTopic(std::string topic) {
+    this->currentTopic = topic;
+}
+
+void mqtt_client::disconnect() {
+
+    try {
+        client->disconnect()->wait();
+    } catch (const mqtt::exception &exc) {
+        QMessageBox messageBox;
+        messageBox.critical(0, "Error", exc.what());
+        messageBox.setFixedSize(500, 200);
+        exit(1);
     }
 }

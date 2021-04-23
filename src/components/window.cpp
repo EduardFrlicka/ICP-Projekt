@@ -71,15 +71,6 @@ void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
     image->show();
 }
 
-void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
-    textEdit->setEnabled(1);
-    send_btn->setEnabled(1);
-    attachFile_btn->setEnabled(1);
-    // std::cout << item->text(0).toStdString()
-
-    // tu máme meno columnu na kliknutie a možme nastavit aktualny topic
-}
-
 void window::on_subscribe_btn_clicked() {
     SubscribeDialog dialog;
     if (dialog.exec() == QDialog::Rejected)
@@ -122,9 +113,21 @@ void window::addMessage(QByteArray msg, int myMessage = 0) {
 }
 
 void window::addNewTopic(QString topicName) {
+
+    // home/kuchyna
+
     auto topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicName));
 
     //    treeWidget->findItems() takto najdeme item a ptm vieme appednut child tomu itemu
     //    tu su flagy na matchovanie stringov aby sme našli spravneho potmoka podla topicu ktorý chceme pridať a prípadne aby sa spravila nova hierarchia
     treeWidget->addTopLevelItem(topic);
+}
+
+void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
+    textEdit->setEnabled(1);
+    send_btn->setEnabled(1);
+    attachFile_btn->setEnabled(1);
+    // std::cout << item->text(0).toStdString()
+
+    // tu máme meno columnu na kliknutie a možme nastavit aktualny topic
 }

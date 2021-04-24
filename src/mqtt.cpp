@@ -36,6 +36,7 @@ void mqtt_client::sendMessage(QByteArray msg) {
 }
 
 int mqtt_client::subscribe(std::string topic) {
+    std::cout << "subscribe: " << topic << std::endl;
     try {
         auto subOpts = mqtt::subscribe_options(NO_LOCAL);
         auto tok = this->client->subscribe(topic, QOS, subOpts);
@@ -47,7 +48,20 @@ int mqtt_client::subscribe(std::string topic) {
     }
 }
 
+int mqtt_client::unsubscribe(std::string topic) {
+    std::cout << "unsubscribe: " << topic << std::endl;
+    try {
+        auto tok = this->client->unsubscribe(topic);
+        tok->wait();
+        return tok->get_return_code();
+    } catch (const mqtt::exception &exc) {
+        std::cout << exc.what() << std::endl;
+        return 1;
+    }
+}
+
 void mqtt_client::setCurrentTopic(std::string topic) {
+    std::cout << "current topic: " << topic << std::endl;
     this->currentTopic = topic;
 }
 

@@ -194,7 +194,7 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
         send_btn->setEnabled(1);
         attachFile_btn->setEnabled(1);
         listWidget->setEnabled(1);
-
+        unsubscribe_btn->setEnabled(1);
     } else {
         client.setCurrentTopic("");
         // Disable panel
@@ -202,5 +202,32 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
         send_btn->setEnabled(0);
         attachFile_btn->setEnabled(0);
         listWidget->setEnabled(0);
+        unsubscribe_btn->setEnabled(0);
     }
+}
+
+void window::on_unsubscribe_btn_clicked() {
+    int i;
+    QTreeWidgetItem *last_message = findTopicRecursive(QString::fromStdString(this->client.currentTopic), &i);
+
+    if (this->client.unsubscribe(this->client.currentTopic)) {
+        unsubscribe_btn->setDisabled(1);
+        return;
+    }
+
+    last_message->data(0, Qt::UserRole).value<QJsonObject>()["isSubscribed"] = false;
+    if (last_message->childCount() == 0)
+        delete last_message;
+
+    // clear all
+    while (this->listWidget->count() > 0) {
+        this->listWidget->takeItem(0);
+    }
+    messages[QString::fromStdString(this->client.currentTopic)].clear();
+    unsubscribe_btn->setEnabled(0);
+    textEdit->setEnabled(0);
+    send_btn->setEnabled(0);
+    attachFile_btn->setEnabled(0);
+    listWidget->setEnabled(0);
+    this->client.setCurrentTopic("");
 }

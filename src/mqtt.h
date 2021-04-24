@@ -24,6 +24,7 @@ class mqtt_client : public QWidget {
     void disconnect();
 
     int subscribe(std::string topic);
+    int unsubscribe(std::string topic);
     void sendMessage(QByteArray msg);
     void setCurrentTopic(std::string topic);
     mqtt::async_client *client;

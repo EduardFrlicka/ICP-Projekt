@@ -37,6 +37,7 @@ class window : public QWidget, private Ui::window {
     void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_subscribe_btn_clicked();
+    void on_unsubscribe_btn_clicked();
     void on_attachFile_btn_clicked();
 };
 

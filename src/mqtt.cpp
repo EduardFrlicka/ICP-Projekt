@@ -9,7 +9,7 @@ void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
 
     client = new mqtt::async_client(ADDRESS, CLIENTID, mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(10)).mqtt_version(MQTTVERSION_5).clean_start(true).finalize();
+    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(3600)).mqtt_version(MQTTVERSION_5).clean_start(true).automatic_reconnect(true).finalize();
 
     try {
         client->connect(connOpts)->wait();

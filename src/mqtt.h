@@ -23,15 +23,13 @@ class mqtt_client : public QWidget {
     void connect(std::string ADDRESS, std::string CLIENTID);
     void disconnect();
 
-    int mqtt_client::subscribe(std::string topic);
+    int subscribe(std::string topic);
     void sendMessage(QByteArray msg);
     void setCurrentTopic(std::string topic);
     mqtt::async_client *client;
-  signals:
-    void getMessage(QByteArray msg);
-
-  private:
     std::string currentTopic;
+  signals:
+    void getMessage(QByteArray msg, QString topicName);
 };
 
 #endif

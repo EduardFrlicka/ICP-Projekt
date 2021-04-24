@@ -12,22 +12,20 @@ window::window(QWidget *parent) : QWidget(parent) {
         exit(0);
     }
 
-    connect(&client, SIGNAL(getMessage(QByteArray)), this, SLOT(addMessage(QByteArray)));
+    connect(&client, SIGNAL(getMessage(QByteArray, QString)), this, SLOT(addMessage(QByteArray, QString)));
 }
 
 // SLOTS
 
 void window::on_send_btn_clicked() {
-    auto message_data = textEdit->toPlainText().toStdString();
+    auto message = textEdit->toPlainText().toStdString();
 
-    if (message_data.size() == 0)
+    if (message.size() == 0)
         return;
 
-    QByteArray msg = QByteArray::fromStdString(message_data);
-    msg.append(STRING_MSG);
-
-    client.sendMessage(msg);
-    this->addMessage(msg);
+    QByteArray message_data(message.c_str(), message.size());
+    client.sendMessage(message_data);
+    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic));
 
     textEdit->setText("");
 }
@@ -38,20 +36,18 @@ void window::on_attachFile_btn_clicked() {
     if (fileNames.size() == 0)
         return;
 
-    QByteArray msg;
+    QByteArray message_data;
     // open file
     std::ifstream myfile(fileNames[0].toStdString());
 
     // write image data to message
     char byte = 0;
     while (myfile.get(byte)) {
-        msg.append(byte);
+        message_data.append(byte);
     }
-    // append byte to recognize type of message - image
-    msg.append(IMAGE_MSG);
 
-    client.sendMessage(msg);
-    this->addMessage(msg);
+    client.sendMessage(message_data);
+    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic));
 }
 
 void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
@@ -82,41 +78,38 @@ void window::on_subscribe_btn_clicked() {
 
 // CLASS FUNCTIONS
 
-void window::addMessage(QByteArray msg) {
+void window::addMessage(QByteArray msg, QString topicName) {
+    std::cout << topicName.toStdString() << " : " << msg.toStdString() << std::endl;
     QListWidgetItem *item = new QListWidgetItem();
-    QIcon icon = QIcon("./img/person.ico");
-    item->setIcon(icon);
     item->setFlags(Qt::ItemIsEnabled);
 
-    // if (myMessage) {
-    //     item->setBackground(Qt::gray);
-    // }
+    QPixmap img;
+    img.loadFromData(msg);
 
-    int msg_type = msg.back();
-    msg.chop(1);
-
-    switch (msg_type) {
-    case IMAGE_MSG:
+    if (!img.toImage().isNull()) {
         item->setData(Qt::DisplayRole, "[image file]");
         item->setData(Qt::UserRole, msg);
-        break;
-    case STRING_MSG:
+    } else {
         item->setData(Qt::DisplayRole, msg);
-        break;
-    default:
-        break;
-        return;
     }
 
+    if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
+        messages[topicName].removeFirst();
+
+    messages[topicName].append(item);
+
     // Add item and scroll down
-    listWidget->addItem(item);
-    listWidget->scrollToBottom();
+    if (topicName == QByteArray::fromStdString(this->client.currentTopic)) {
+        listWidget->addItem(item);
+
+        listWidget->scrollToBottom();
+    }
 }
 
 QString getFullTopicName(QStringList list, int end) {
     QString res = "";
     for (int i = 0; i <= end; i++)
-        res += (res=="" ? "" : "/") + list[i];
+        res += (res == "" ? "" : "/") + list[i];
     return res;
 }
 
@@ -133,8 +126,8 @@ QTreeWidgetItem *window::findTopic(QString topicName) {
 
     QList<QTreeWidgetItem *> find_res = treeWidget->findItems(leaf, Qt::MatchExactly | Qt::MatchRecursive);
     for (auto child : find_res) {
-        QString child_path = child->data(0, Qt::UserRole).value<QString>();
-        std::cout << child_path.toStdString() << ":" << topicName.toStdString() << std::endl;
+        QJsonObject data = child->data(0, Qt::UserRole).value<QJsonObject>();
+        QString child_path = data["topicName"].toString();
         if (topicName == child_path)
             return child;
     }
@@ -155,13 +148,21 @@ QTreeWidgetItem *window::findTopicRecursive(QString topicName, int *i) {
 void window::addNewTopic(QString topicName) {
     QStringList topicList = topicName.split('/');
     topicName = getFullTopicName(topicList);
-    // home/kuchyna
+
     int i;
     QTreeWidgetItem *last = findTopicRecursive(topicName, &i);
     i++;
+    // dorobit kontrolu pridavania topicu ktorý sa tam už nachadza ale neni subscribed... a pridavanie topicov ktore su už aj subscribed a su aj v štrukture
     for (; i < topicList.count(); i++) {
         auto new_topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicList[i]));
-        new_topic->setData(0, Qt::UserRole, getFullTopicName(topicList, i));
+        QJsonObject data{{"topicName", getFullTopicName(topicList, i)}, {"isSubscribed", false}};
+        if (getFullTopicName(topicList, i) == topicName) {
+            data["isSubscribed"] = true;
+        }
+
+        new_topic->setData(0, Qt::UserRole, data);
+
+        new_topic->setFlags(Qt::ItemIsEnabled);
 
         if (last != NULL)
             last->addChild(new_topic);
@@ -169,13 +170,28 @@ void window::addNewTopic(QString topicName) {
             treeWidget->addTopLevelItem(new_topic);
         last = new_topic;
     }
-
-    //    treeWidget->findItems() takto najdeme item a ptm vieme appednut child tomu itemu
-    //    tu su flagy na matchovanie stringov aby sme našli spravneho potmoka podla topicu ktorý chceme pridať a prípadne aby sa spravila nova hierarchia
 }
 
 void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
-    textEdit->setEnabled(1);
-    send_btn->setEnabled(1);
-    attachFile_btn->setEnabled(1);
+    QJsonObject data = item->data(column, Qt::UserRole).value<QJsonObject>();
+    while (this->listWidget->count() > 0) {
+        this->listWidget->takeItem(0);
+    }
+    if (data["isSubscribed"].toBool()) {
+        client.setCurrentTopic(data["topicName"].toString().toStdString());
+        for (auto item : messages[data["topicName"].toString()])
+            this->listWidget->addItem(item);
+        // Enable panel
+        textEdit->setEnabled(1);
+        send_btn->setEnabled(1);
+        attachFile_btn->setEnabled(1);
+        listWidget->setEnabled(1);
+
+    } else {
+        // Disable panel
+        textEdit->setEnabled(0);
+        send_btn->setEnabled(0);
+        attachFile_btn->setEnabled(0);
+        listWidget->setEnabled(0);
+    }
 }

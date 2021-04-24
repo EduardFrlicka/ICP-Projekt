@@ -71,11 +71,11 @@
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,1">
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="10,1">
            <item>
             <widget class="QListWidget" name="listWidget">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="autoFillBackground">
               <bool>false</bool>

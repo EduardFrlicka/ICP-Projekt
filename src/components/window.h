@@ -7,12 +7,14 @@
 #include "server_dialog.h"
 #include "subscribe_dialog.h"
 #include "ui_window.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMap>
 #include <QWidget>
 #include <fstream>
 #include <iostream>
 
-#define IMAGE_MSG (char)0
-#define STRING_MSG (char)1
+#define MAX_MESSAGE_HISTORY 10
 
 // možno nejaké stuff s right clickom https://www.setnode.com/blog/right-click-context-menus-with-qt/#fnref:viewportclasses
 
@@ -21,14 +23,12 @@ class window : public QWidget, private Ui::window {
 
   public:
     explicit window(QWidget *parent = nullptr);
-    QList<QTreeWidgetItem *> topics;
-
     mqtt_client client;
-
+    QMap<QString, QList<QListWidgetItem *>> messages;
     void addNewTopic(QString topicName);
 
   public slots:
-    void addMessage(QByteArray msg, int myMessage = 0);
+    void addMessage(QByteArray msg,QString topicName);
 
   private slots:
     QTreeWidgetItem *findTopic(QString topicName);

@@ -25,7 +25,7 @@ void window::on_send_btn_clicked() {
 
     QByteArray message_data(message.c_str(), message.size());
     client.sendMessage(message_data);
-    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic));
+    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic), 1);
 
     textEdit->setText("");
 }
@@ -47,7 +47,7 @@ void window::on_attachFile_btn_clicked() {
     }
 
     client.sendMessage(message_data);
-    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic));
+    this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic), 1);
 }
 
 void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
@@ -78,19 +78,26 @@ void window::on_subscribe_btn_clicked() {
 
 // CLASS FUNCTIONS
 
-void window::addMessage(QByteArray msg, QString topicName) {
-    std::cout << topicName.toStdString() << " : " << msg.toStdString() << std::endl;
+void window::addMessage(QByteArray msg, QString topicName, int my_message) {
+
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::ItemIsEnabled);
+    item->setData(Qt::DecorationRole, QColor::fromRgb(255, 255, 255));
+    if (my_message)
+        item->setData(Qt::DecorationRole, QColor::fromRgb(0, 0, 0));
 
     QPixmap img;
     img.loadFromData(msg);
 
+    int i;
+    QTreeWidgetItem *last_message = findTopicRecursive(topicName, &i);
     if (!img.toImage().isNull()) {
         item->setData(Qt::DisplayRole, "[image file]");
         item->setData(Qt::UserRole, msg);
+        last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
         item->setData(Qt::DisplayRole, msg);
+        last_message->setData(1, Qt::DisplayRole, msg);
     }
 
     if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
@@ -101,7 +108,6 @@ void window::addMessage(QByteArray msg, QString topicName) {
     // Add item and scroll down
     if (topicName == QByteArray::fromStdString(this->client.currentTopic)) {
         listWidget->addItem(item);
-
         listWidget->scrollToBottom();
     }
 }
@@ -161,7 +167,6 @@ void window::addNewTopic(QString topicName) {
         }
 
         new_topic->setData(0, Qt::UserRole, data);
-
         new_topic->setFlags(Qt::ItemIsEnabled);
 
         if (last != NULL)
@@ -173,6 +178,9 @@ void window::addNewTopic(QString topicName) {
 }
 
 void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
+    if (column != 0)
+        return;
+
     QJsonObject data = item->data(column, Qt::UserRole).value<QJsonObject>();
     while (this->listWidget->count() > 0) {
         this->listWidget->takeItem(0);
@@ -188,6 +196,7 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
         listWidget->setEnabled(1);
 
     } else {
+        client.setCurrentTopic("");
         // Disable panel
         textEdit->setEnabled(0);
         send_btn->setEnabled(0);

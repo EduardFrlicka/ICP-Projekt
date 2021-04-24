@@ -14,7 +14,7 @@
 #include <fstream>
 #include <iostream>
 
-#define MAX_MESSAGE_HISTORY 10
+#define MAX_MESSAGE_HISTORY 50
 
 // možno nejaké stuff s right clickom https://www.setnode.com/blog/right-click-context-menus-with-qt/#fnref:viewportclasses
 
@@ -28,7 +28,7 @@ class window : public QWidget, private Ui::window {
     void addNewTopic(QString topicName);
 
   public slots:
-    void addMessage(QByteArray msg,QString topicName);
+    void addMessage(QByteArray msg, QString topicName, int my_message = 0);
 
   private slots:
     QTreeWidgetItem *findTopic(QString topicName);

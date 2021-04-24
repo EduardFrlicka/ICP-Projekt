@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>501</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -15,6 +15,9 @@
     <width>900</width>
     <height>500</height>
    </size>
+  </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::DefaultContextMenu</enum>
   </property>
   <property name="windowTitle">
    <string>MQTT Explorer</string>
@@ -34,7 +37,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,3">
+        <layout class="QHBoxLayout" name="horizontalLayout" stretch="20,10">
          <item>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>
@@ -45,6 +48,42 @@
              <property name="indentation">
               <number>10</number>
              </property>
+             <property name="uniformRowHeights">
+              <bool>false</bool>
+             </property>
+             <property name="itemsExpandable">
+              <bool>true</bool>
+             </property>
+             <property name="allColumnsShowFocus">
+              <bool>false</bool>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+             <property name="headerHidden">
+              <bool>false</bool>
+             </property>
+             <property name="columnCount">
+              <number>2</number>
+             </property>
+             <attribute name="headerVisible">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="headerCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>250</number>
+             </attribute>
+             <attribute name="headerHighlightSections">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>true</bool>
+             </attribute>
              <column>
               <property name="text">
                <string>Topics</string>
@@ -56,7 +95,12 @@
                </font>
               </property>
               <property name="textAlignment">
-               <set>AlignCenter</set>
+               <set>AlignLeading|AlignVCenter</set>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Last Message</string>
               </property>
              </column>
             </widget>
@@ -64,14 +108,88 @@
            <item>
             <widget class="QPushButton" name="subscribe_btn">
              <property name="text">
-              <string>Subsribe new topic</string>
+              <string>Subscribe new topic</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="unsubscribe_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="palette">
+              <palette>
+               <active>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>204</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>255</red>
+                   <green>255</green>
+                   <blue>255</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </active>
+               <inactive>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>239</red>
+                   <green>239</green>
+                   <blue>239</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>0</red>
+                   <green>0</green>
+                   <blue>0</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </inactive>
+               <disabled>
+                <colorrole role="Button">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>239</red>
+                   <green>239</green>
+                   <blue>239</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+                <colorrole role="ButtonText">
+                 <brush brushstyle="SolidPattern">
+                  <color alpha="255">
+                   <red>190</red>
+                   <green>190</green>
+                   <blue>190</blue>
+                  </color>
+                 </brush>
+                </colorrole>
+               </disabled>
+              </palette>
+             </property>
+             <property name="text">
+              <string>Unsubscribe</string>
              </property>
             </widget>
            </item>
           </layout>
          </item>
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="10,1">
+          <layout class="QVBoxLayout" name="verticalLayout_2" stretch="20,2,1">
            <item>
             <widget class="QListWidget" name="listWidget">
              <property name="enabled">
@@ -98,7 +216,7 @@
             </widget>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
              <item>
               <widget class="QTextEdit" name="textEdit">
                <property name="enabled">
@@ -134,29 +252,29 @@
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QPushButton" name="attachFile_btn">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Send Image</string>
-               </property>
-              </widget>
-             </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="attachFile_btn">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>50</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Send Image</string>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>

@@ -56,8 +56,10 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
     if (item->data(Qt::UserRole).isNull())
         return;
 
+    QByteArray msg = item->data(Qt::UserRole).value<QByteArray>();
+
     QPixmap img;
-    img.loadFromData(item->data(Qt::UserRole).value<QByteArray>());
+    img.loadFromData(msg);
 
     // show image
     if (!img.toImage().isNull()) {
@@ -68,7 +70,9 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
 
         image->show();
     } else {
-        // show long message
+        MessageForm *message = new MessageForm();
+        message->SetText(msg);
+        message->show();
     }
 }
 
@@ -112,11 +116,11 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
-        if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
-            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ... [long message ↓]");
-            item->setData(Qt::UserRole, msg);
-        } else if (QString(msg).split("\n").count() > 1) {
+        if (QString(msg).split("\n").count() > 1) {
             item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ... [multiline message ↓]");
+            item->setData(Qt::UserRole, msg);
+        } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
+            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ... [long message ↓]");
             item->setData(Qt::UserRole, msg);
         } else {
             item->setData(Qt::DisplayRole, msg);

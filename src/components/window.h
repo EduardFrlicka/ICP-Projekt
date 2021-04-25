@@ -10,11 +10,14 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+
+#include "message_window.h"
 #include <QMainWindow>
 #include <QMap>
 #include <QWidget>
 #include <fstream>
 #include <iostream>
+
 #define MAX_MESSAGE_HISTORY 50
 #define MAX_MESSAGE_LINE_LENGTH 50
 

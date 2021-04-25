@@ -67,6 +67,23 @@ void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
     image->show();
 }
 
+void window::on_listWidget_all_itemDoubleClicked(QListWidgetItem *item) {
+
+    if (item->data(Qt::UserRole).isNull())
+        return;
+
+    // load image from item data
+    QPixmap img;
+    img.loadFromData(item->data(Qt::UserRole).value<QByteArray>());
+    // show image
+    ImageForm *image = new ImageForm();
+    image->SetImage(&img);
+    image->setMaximumWidth(img.width());
+    image->setMaximumHeight(img.height());
+
+    image->show();
+}
+
 void window::on_subscribe_btn_clicked() {
     SubscribeDialog dialog;
     if (dialog.exec() == QDialog::Rejected)

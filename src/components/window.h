@@ -7,18 +7,19 @@
 #include "server_dialog.h"
 #include "subscribe_dialog.h"
 #include "ui_window.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMainWindow>
 #include <QMap>
 #include <QWidget>
 #include <fstream>
 #include <iostream>
-
 #define MAX_MESSAGE_HISTORY 50
 
 // možno nejaké stuff s right clickom https://www.setnode.com/blog/right-click-context-menus-with-qt/#fnref:viewportclasses
 
-class window : public QWidget, private Ui::window {
+class window : public QMainWindow, private Ui::window {
     Q_OBJECT
 
   public:

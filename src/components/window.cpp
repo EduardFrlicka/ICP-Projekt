@@ -1,6 +1,6 @@
 #include "window.h"
 
-window::window(QWidget *parent) : QWidget(parent) {
+window::window(QWidget *parent) : QMainWindow(parent) {
     setupUi(this);
 
     ServerDialog dialog;
@@ -99,9 +99,12 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::ItemIsEnabled);
+    item->setData(Qt::BackgroundRole, QColor::fromRgb(255, 255, 255));
     item->setData(Qt::DecorationRole, QColor::fromRgb(255, 255, 255));
-    if (my_message)
-        item->setData(Qt::DecorationRole, QColor::fromRgb(0, 0, 0));
+    if (my_message) {
+        item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
+        item->setData(Qt::DecorationRole, QColor::fromRgb(209, 252, 149));
+    }
 
     QPixmap img;
     img.loadFromData(msg);
@@ -183,23 +186,22 @@ void window::addNewTopic(QString topicName) {
     int i;
     QTreeWidgetItem *last = findTopicRecursive(topicName, &i);
     i++;
-    // dorobit kontrolu pridavania topicu ktorý sa tam už nachadza ale neni subscribed... a pridavanie topicov ktore su už aj subscribed a su aj v štrukture
     for (; i < topicList.count(); i++) {
         auto new_topic = new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(topicList[i]));
         QJsonObject data{{"topicName", getFullTopicName(topicList, i)}, {"isSubscribed", false}};
-        if (getFullTopicName(topicList, i) == topicName) {
-            data["isSubscribed"] = true;
-        }
-
         new_topic->setData(0, Qt::UserRole, data);
-        new_topic->setFlags(Qt::ItemIsEnabled);
 
+        new_topic->setFlags(Qt::ItemIsEnabled);
         if (last != NULL)
             last->addChild(new_topic);
         else
             treeWidget->addTopLevelItem(new_topic);
         last = new_topic;
     }
+
+    QJsonObject data = last->data(0, Qt::UserRole).value<QJsonObject>();
+    data["isSubscribed"] = true;
+    last->setData(0, Qt::UserRole, data);
 }
 
 void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
@@ -233,7 +235,7 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
 
 void window::on_unsubscribe_btn_clicked() {
     int i;
-    QTreeWidgetItem *last_message = findTopicRecursive(QString::fromStdString(this->client.currentTopic), &i);
+    QTreeWidgetItem *topic = findTopicRecursive(QString::fromStdString(this->client.currentTopic), &i);
 
     if (this->client.unsubscribe(this->client.currentTopic)) {
         unsubscribe_btn->setDisabled(1);
@@ -241,12 +243,12 @@ void window::on_unsubscribe_btn_clicked() {
     }
 
     // change status to unsbuscribe
-    QJsonObject data = last_message->data(0, Qt::UserRole).value<QJsonObject>();
+    QJsonObject data = topic->data(0, Qt::UserRole).value<QJsonObject>();
     data["isSubscribed"] = false;
-    last_message->setData(0, Qt::UserRole, data);
-
-    if (last_message->childCount() == 0)
-        delete last_message;
+    topic->setData(0, Qt::UserRole, data);
+    topic->setData(1, Qt::DisplayRole, "");
+    if (topic->childCount() == 0)
+        delete topic;
 
     // clear all
     while (this->listWidget->count() > 0) {

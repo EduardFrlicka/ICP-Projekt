@@ -110,6 +110,14 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         listWidget->addItem(item);
         listWidget->scrollToBottom();
     }
+
+    if (listWidget_all->count() + 1 > MAX_MESSAGE_HISTORY)
+        delete listWidget_all->item(0);
+
+    QListWidgetItem *item_to_all = item->clone();
+    item_to_all->setData(Qt::DisplayRole, "[" + topicName + "] - " + item_to_all->data(Qt::DisplayRole).value<QString>());
+    listWidget_all->addItem(item_to_all);
+    listWidget_all->scrollToBottom();
 }
 
 QString getFullTopicName(QStringList list, int end) {
@@ -215,7 +223,11 @@ void window::on_unsubscribe_btn_clicked() {
         return;
     }
 
-    last_message->data(0, Qt::UserRole).value<QJsonObject>()["isSubscribed"] = false;
+    // change status to unsbuscribe
+    QJsonObject data = last_message->data(0, Qt::UserRole).value<QJsonObject>();
+    data["isSubscribed"] = false;
+    last_message->setData(0, Qt::UserRole, data);
+
     if (last_message->childCount() == 0)
         delete last_message;
 

@@ -10,6 +10,7 @@
 #include "mqtt/topic.h"
 
 #include <QMessageBox>
+#include <QUuid>
 
 #define NO_LOCAL true
 #define QOS 1
@@ -20,7 +21,7 @@ class mqtt_client : public QWidget {
   public:
     mqtt_client();
     ~mqtt_client();
-    void connect(std::string ADDRESS, std::string CLIENTID);
+    void connect(std::string ADDRESS);
     void disconnect();
 
     int subscribe(std::string topic);
@@ -31,6 +32,7 @@ class mqtt_client : public QWidget {
     std::string currentTopic;
   signals:
     void getMessage(QByteArray msg, QString topicName);
+    void sendStatusText(QString msg);
 };
 
 #endif

@@ -5,6 +5,6 @@ ServerDialog::ServerDialog(QWidget *parent) : QDialog(parent) {
     serverAdressInput->setText(DEFAULT_ADRESS);
 }
 
-QString ServerDialog::getServerAdress() { return serverAdressInput->text(); }
-
-QString ServerDialog::getClientId() { return clientNameInput->text(); }
+QString ServerDialog::getServerAdress() {
+    return serverAdressInput->text();
+}

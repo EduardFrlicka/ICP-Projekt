@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 #define MAX_MESSAGE_HISTORY 50
+#define MAX_MESSAGE_LINE_LENGTH 50
 
 // možno nejaké stuff s right clickom https://www.setnode.com/blog/right-click-context-menus-with-qt/#fnref:viewportclasses
 
@@ -30,13 +31,14 @@ class window : public QMainWindow, private Ui::window {
 
   public slots:
     void addMessage(QByteArray msg, QString topicName, int my_message = 0);
+    void setStatusBarText(QString msg);
 
   private slots:
     QTreeWidgetItem *findTopic(QString topicName);
     QTreeWidgetItem *findTopicRecursive(QString topicName, int *i);
     void on_send_btn_clicked();
-    void on_listWidget_itemDoubleClicked(QListWidgetItem *item);
-    void on_listWidget_all_itemDoubleClicked(QListWidgetItem *item);
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+    void on_listWidget_all_itemClicked(QListWidgetItem *item);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_subscribe_btn_clicked();
     void on_unsubscribe_btn_clicked();

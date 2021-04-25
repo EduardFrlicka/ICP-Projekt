@@ -12,6 +12,5 @@ class ServerDialog : public QDialog, private Ui::ServerDialog {
   public:
     ServerDialog(QWidget *parent = nullptr);
     QString getServerAdress();
-    QString getClientId();
 };
 #endif

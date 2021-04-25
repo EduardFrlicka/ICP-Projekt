@@ -6,13 +6,14 @@ window::window(QWidget *parent) : QMainWindow(parent) {
     ServerDialog dialog;
     auto dialog_ret = dialog.exec();
     if (dialog_ret == QDialog::Accepted) {
-        client.connect(dialog.getServerAdress().toStdString(), dialog.getClientId().toStdString());
+        client.connect(dialog.getServerAdress().toStdString());
     }
     if (dialog_ret == QDialog::Rejected) {
         exit(0);
     }
 
     connect(&client, SIGNAL(getMessage(QByteArray, QString)), this, SLOT(addMessage(QByteArray, QString)));
+    connect(&client, SIGNAL(sendStatusText(QString)), this, SLOT(setStatusBarText(QString)));
 }
 
 // SLOTS
@@ -50,38 +51,30 @@ void window::on_attachFile_btn_clicked() {
     this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic), 1);
 }
 
-void window::on_listWidget_itemDoubleClicked(QListWidgetItem *item) {
+void window::on_listWidget_itemClicked(QListWidgetItem *item) {
 
     if (item->data(Qt::UserRole).isNull())
         return;
 
-    // load image from item data
     QPixmap img;
     img.loadFromData(item->data(Qt::UserRole).value<QByteArray>());
-    // show image
-    ImageForm *image = new ImageForm();
-    image->SetImage(&img);
-    image->setMaximumWidth(img.width());
-    image->setMaximumHeight(img.height());
 
-    image->show();
+    // show image
+    if (!img.toImage().isNull()) {
+        ImageForm *image = new ImageForm();
+        image->SetImage(&img);
+        image->setMaximumWidth(img.width());
+        image->setMaximumHeight(img.height());
+
+        image->show();
+    } else {
+        // show long message
+    }
 }
 
-void window::on_listWidget_all_itemDoubleClicked(QListWidgetItem *item) {
+void window::on_listWidget_all_itemClicked(QListWidgetItem *item) {
 
-    if (item->data(Qt::UserRole).isNull())
-        return;
-
-    // load image from item data
-    QPixmap img;
-    img.loadFromData(item->data(Qt::UserRole).value<QByteArray>());
-    // show image
-    ImageForm *image = new ImageForm();
-    image->SetImage(&img);
-    image->setMaximumWidth(img.width());
-    image->setMaximumHeight(img.height());
-
-    image->show();
+    on_listWidget_itemClicked(item);
 }
 
 void window::on_subscribe_btn_clicked() {
@@ -99,8 +92,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::ItemIsEnabled);
-    item->setData(Qt::BackgroundRole, QColor::fromRgb(255, 255, 255));
-    item->setData(Qt::DecorationRole, QColor::fromRgb(255, 255, 255));
+    item->setData(Qt::DecorationRole, QPalette::Window);
     if (my_message) {
         item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
         item->setData(Qt::DecorationRole, QColor::fromRgb(209, 252, 149));
@@ -111,13 +103,31 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     int i;
     QTreeWidgetItem *last_message = findTopicRecursive(topicName, &i);
+
     if (!img.toImage().isNull()) {
-        item->setData(Qt::DisplayRole, "[image file]");
+
+        item->setData(Qt::DisplayRole, "[image file ↓]");
         item->setData(Qt::UserRole, msg);
+
+        // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
-        item->setData(Qt::DisplayRole, msg);
-        last_message->setData(1, Qt::DisplayRole, msg);
+        if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
+            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ... [long message ↓]");
+            item->setData(Qt::UserRole, msg);
+        } else if (QString(msg).split("\n").count() > 1) {
+            item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ... [multiline message ↓]");
+            item->setData(Qt::UserRole, msg);
+        } else {
+            item->setData(Qt::DisplayRole, msg);
+        }
+
+        // QtreeWiev LastMessage
+        auto message_lines = QString(msg).split("\n");
+        if (message_lines.count() > 1)
+            last_message->setData(1, Qt::DisplayRole, message_lines[0] + " ... [multiline message]");
+        else
+            last_message->setData(1, Qt::DisplayRole, msg);
     }
 
     if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
@@ -125,12 +135,13 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     messages[topicName].append(item);
 
-    // Add item and scroll down
+    // Add item to current wiew and scroll down
     if (topicName == QByteArray::fromStdString(this->client.currentTopic)) {
         listWidget->addItem(item);
         listWidget->scrollToBottom();
     }
 
+    // All messages view
     if (listWidget_all->count() + 1 > MAX_MESSAGE_HISTORY)
         delete listWidget_all->item(0);
 
@@ -261,4 +272,8 @@ void window::on_unsubscribe_btn_clicked() {
     attachFile_btn->setEnabled(0);
     listWidget->setEnabled(0);
     this->client.setCurrentTopic("");
+}
+
+void window::setStatusBarText(QString msg) {
+    this->statusBar()->showMessage(msg, 10);
 }

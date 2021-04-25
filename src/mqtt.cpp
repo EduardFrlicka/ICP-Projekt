@@ -5,16 +5,15 @@ mqtt_client::mqtt_client() {
 mqtt_client::~mqtt_client() {
 }
 
-void mqtt_client::connect(std::string ADDRESS, std::string CLIENTID) {
+void mqtt_client::connect(std::string ADDRESS) {
 
-    client = new mqtt::async_client(ADDRESS, CLIENTID, mqtt::create_options(MQTTVERSION_5));
+    client = new mqtt::async_client(ADDRESS, QUuid::createUuid().toString().toStdString(), mqtt::create_options(MQTTVERSION_5));
 
     auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(3600)).mqtt_version(MQTTVERSION_5).clean_start(true).automatic_reconnect(true).finalize();
 
     try {
         auto tok = client->connect(connOpts);
         tok->wait();
-        std::cout << "Connection: " << tok->get_return_code() << std::endl;
     } catch (const mqtt::exception &exc) {
         QMessageBox messageBox;
         messageBox.critical(0, "Error", exc.what());
@@ -31,7 +30,7 @@ void mqtt_client::sendMessage(QByteArray msg) {
     try {
         this->client->publish(this->currentTopic, msg.toStdString());
     } catch (const mqtt::exception &exc) {
-        std::cout << exc.what() << std::endl;
+        emit this->sendStatusText(exc.what());
     }
 }
 
@@ -43,7 +42,7 @@ int mqtt_client::subscribe(std::string topic) {
         tok->wait();
         return tok->get_return_code();
     } catch (const mqtt::exception &exc) {
-        std::cout << exc.what() << std::endl;
+        emit this->sendStatusText(exc.what());
         return 1;
     }
 }
@@ -55,7 +54,7 @@ int mqtt_client::unsubscribe(std::string topic) {
         tok->wait();
         return tok->get_return_code();
     } catch (const mqtt::exception &exc) {
-        std::cout << exc.what() << std::endl;
+        emit this->sendStatusText(exc.what());
         return 1;
     }
 }

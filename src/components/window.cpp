@@ -89,7 +89,7 @@ void window::on_subscribe_btn_clicked() {
     if (this->subscribe_text->text().trimmed().size() != 0) {
         addNewTopic(this->subscribe_text->text());
         client.subscribe(this->subscribe_text->text().toStdString());
-        this->setStatusBarText("Sucessfully added new topic!");
+        this->setStatusBarText("Sucessfully added new topic");
         return;
     }
     this->setStatusBarText("Invalid topic name");
@@ -285,4 +285,10 @@ void window::on_unsubscribe_btn_clicked() {
 
 void window::setStatusBarText(QString msg) {
     this->statusBar()->showMessage(msg, 1000);
+}
+
+void window::on_actionSnapshot_triggered(bool checked) {
+    QString file = QFileDialog::getSaveFileName(this, "Snapshot", "payload.txt");
+
+    this->setStatusBarText("Snapshot sucessfully created");
 }

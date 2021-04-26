@@ -42,6 +42,7 @@ class window : public QMainWindow, private Ui::window {
     void on_listWidget_itemClicked(QListWidgetItem *item);
     void on_listWidget_all_itemClicked(QListWidgetItem *item);
     void on_treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_actionSnapshot_triggered(bool checked);
     void on_subscribe_btn_clicked();
     void on_unsubscribe_btn_clicked();
     void on_attachFile_btn_clicked();

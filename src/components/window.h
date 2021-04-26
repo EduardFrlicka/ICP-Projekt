@@ -30,6 +30,7 @@ class window : public QMainWindow, private Ui::window {
     mqtt_client client;
     QMap<QString, QList<QListWidgetItem *>> messages;
     void addNewTopic(QString topicName);
+    void closeEvent(QCloseEvent *event);
 
   public slots:
     void addMessage(QByteArray msg, QString topicName, int my_message = 0);

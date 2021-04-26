@@ -292,3 +292,7 @@ void window::on_actionSnapshot_triggered(bool checked) {
 
     this->setStatusBarText("Snapshot sucessfully created");
 }
+
+void window::closeEvent(QCloseEvent *event) {
+    std::cout << "Zatvaram sa" << std::endl;
+}

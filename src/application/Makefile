@@ -7,21 +7,19 @@
 
 # Flags for compiling
 CFLAGS=-std=c++17 -Wall -Wextra -pedantic -fPIC -fpermissive #-pthread
-CFLAGS+=$(shell pkg-config --cflags Qt5Widgets) 
+CFLAGS+=$(patsubst -I%,-isystem %,$(shell pkg-config --cflags Qt5Widgets))
 
-LFLAGS=-std=c++11 -Wall -Wextra -pedantic #-lGL -lpthread 
+LFLAGS=-lpaho-mqtt3c -lpaho-mqtt3a -lpaho-mqttpp3 #-lGL -lpthread 
 LFLAGS+=$(shell pkg-config --libs Qt5Widgets)
 
-LIBRARIES:= -lpaho-mqtt3c -lpaho-mqtt3a -lpaho-mqttpp3
-
 # Name of target binary file
-BINARY_NAME=binary
+BINARY_NAME=app
 
 # Name / Path to bin folder (for storing binary files)
-BIN=../bin
+BIN=../../bin
 
 # Name / Path to folder, where .o files will be stored
-OBJ=../obj
+OBJ=../../obj/application
 
 # Name / Path to folder, where source files are (.h .c .cpp ...)
 SRC=.
@@ -61,19 +59,21 @@ UI_H		:= $(patsubst %.ui, $(OBJ)/ui_%.h,$(UI))
 
 # =========================================================================
 # Targetsl
-.PHONY:  all run clean cleanall source
+.PHONY:  all run clean cleanall source ui
 .SECONDARY:
 
 # =========================================================================
 # Rules
 all: $(BINARY_PATH) 
 
+ui: $(UI_H)
+
 run: $(BINARY_PATH) 
 	./$(BINARY_PATH)
 
 $(BINARY_PATH) : $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CC)  $(OBJECTS) $(LIBRARIES) -o $@ $(LFLAGS)
+	$(CC)  $(OBJECTS) -o $@ $(LFLAGS)
 
 $(OBJ)/%.h.cpp: %.h
 	@mkdir -p $(@D)

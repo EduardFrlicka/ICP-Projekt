@@ -283,26 +283,8 @@ void window::setStatusBarText(QString msg) {
     this->statusBar()->showMessage(msg, 1000);
 }
 
-void window::loadConfig(QString file) {
-    // QSettings::value("conf");
-    QSettings settings(file, QSettings::IniFormat);
-    resize(settings.value("MainWindow/size", QSize(400, 400)).toSize());
-    move(settings.value("MainWindow/pos", QPoint(200, 200)).toPoint());
-
-    std::cout << "Succesfully loaded: " << file.toStdString() << std::endl;
-}
-
-void window::saveConfig(QString file) {
-    // QSettings::setValue("conf/configFile", file);
-    QSettings settings(file, QSettings::IniFormat);
-
-    settings.setValue("MainWindow/size", size());
-    settings.setValue("MainWindow/pos", pos());
-
-    std::cout << "Succesfully created: " << file.toStdString() << std::endl;
-}
-
 void window::on_actionSnapshot_triggered(bool checked) {
+
     std::string root_dir = QFileDialog::getExistingDirectory(this, "Snapshot").toStdString();
     // QString file = QFileDialog::getSaveFileName(this, "Snapshot", "payload.txt","",nullptr, QFileDialog::ShowDirsOnly);
 

@@ -12,14 +12,13 @@
 #include <QSettings>
 
 #include "message_window.h"
+#include <QFile>
 #include <QMainWindow>
 #include <QMap>
 #include <QWidget>
-#include <fstream>
-#include <iostream>
 #include <filesystem>
 #include <fstream>
-#include <QFile>
+#include <iostream>
 #define MAX_MESSAGE_HISTORY 50
 #define MAX_MESSAGE_LINE_LENGTH 50
 
@@ -37,8 +36,6 @@ class window : public QMainWindow, private Ui::window {
 
   public slots:
     void addMessage(QByteArray msg, QString topicName, int my_message = 0);
-    void loadConfig(QString file);
-    void saveConfig(QString file);
     void setStatusBarText(QString msg);
 
   private slots:

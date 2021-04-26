@@ -5,13 +5,18 @@ DOX_CONFIG	:= config-file
 
 
 all: 
-	@cd $(SRC)/ && $(MAKE) --no-print-directory
+	@cd $(SRC)/application/ && $(MAKE) --no-print-directory 
+	@cd $(SRC)/simulator/ && $(MAKE) --no-print-directory
 
 pack:
 	zip -r $(ZIP_NAME) $(SRC) Makefile README.txt $(DOC)
 
 %:
-	@cd $(SRC)/ && $(MAKE) --no-print-directory $@
+	@cd $(SRC)/application/ && $(MAKE) --no-print-directory $@
+
+simulator:
+	@cd $(SRC)/simulator/ && $(MAKE) --no-print-directory
+
 
 doxygen:
 	@mkdir -p $(DOC)
@@ -21,5 +26,5 @@ doxygen:
 
 clean:
 	find $(DOC)/* -not -name '$(DOX_CONFIG)' -delete
-	@cd $(SRC)/ && $(MAKE) --no-print-directory $@
+	@cd $(SRC)/application/ && $(MAKE) --no-print-directory $@
 	rm -f $(ZIP_NAME)

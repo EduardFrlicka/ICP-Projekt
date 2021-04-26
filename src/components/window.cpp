@@ -117,17 +117,14 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     if (!img.toImage().isNull()) {
 
         item->setData(Qt::DisplayRole, "[image file ↓]");
-        item->setData(Qt::UserRole, msg);
 
         // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
         if (QString(msg).split("\n").count() > 1) {
             item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ... [multiline message ↓]");
-            item->setData(Qt::UserRole, msg);
         } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
             item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ... [long message ↓]");
-            item->setData(Qt::UserRole, msg);
         } else {
             item->setData(Qt::DisplayRole, msg);
         }
@@ -139,6 +136,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         else
             last_message->setData(1, Qt::DisplayRole, msg);
     }
+    item->setData(Qt::UserRole, msg);
 
     if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
         messages[topicName].removeFirst();
@@ -288,8 +286,58 @@ void window::setStatusBarText(QString msg) {
     this->statusBar()->showMessage(msg, 1000);
 }
 
+void window::loadConfig(QString file) {
+    // QSettings::value("conf");
+    QSettings settings(file, QSettings::IniFormat);
+    resize(settings.value("MainWindow/size", QSize(400, 400)).toSize());
+    move(settings.value("MainWindow/pos", QPoint(200, 200)).toPoint());
+
+    std::cout << "Succesfully loaded: " << file.toStdString() << std::endl;
+}
+
+void window::saveConfig(QString file) {
+    // QSettings::setValue("conf/configFile", file);
+    QSettings settings(file, QSettings::IniFormat);
+
+    settings.setValue("MainWindow/size", size());
+    settings.setValue("MainWindow/pos", pos());
+
+    std::cout << "Succesfully created: " << file.toStdString() << std::endl;
+}
+
 void window::on_actionSnapshot_triggered(bool checked) {
-    QString file = QFileDialog::getSaveFileName(this, "Snapshot", "payload.txt");
+    std::string root_dir = QFileDialog::getExistingDirectory(this, "Snapshot").toStdString();
+    // QString file = QFileDialog::getSaveFileName(this, "Snapshot", "payload.txt","",nullptr, QFileDialog::ShowDirsOnly);
+
+    QMap<QString, QList<QListWidgetItem *>>::iterator i;
+    std::filesystem::current_path(std::filesystem::path(root_dir));
+    for (i = messages.begin(); i != messages.end(); ++i) {
+        std::cout << i.key().toStdString() << std::endl;
+        std::filesystem::create_directory(i.key().toStdString());
+        auto curr_dir = root_dir + "/" + i.key().toStdString();
+        std::ofstream out(curr_dir + "/payload.txt");
+        int cnt = 0;
+        for (auto j : i.value()) {
+            QPixmap img;
+            QByteArray msg = j->data(Qt::UserRole).toByteArray();
+            img.loadFromData(msg);
+            // obrazok
+            if (!img.toImage().isNull()) {
+                std::string image_name = curr_dir + "/image" + std::to_string(cnt++);
+                out << "[ image ]: " << image_name << std::endl;
+                QFile file(QString::fromStdString(image_name));
+                file.open(QIODevice::WriteOnly);
+                file.write(msg);
+                file.close();
+                
+            } else {
+                out << msg.toStdString() << std::endl;
+            }
+        }
+        out.close();
+    }
+
+    std::cout << "Succesfully created: " << root_dir << std::endl;
 
     this->setStatusBarText("Snapshot sucessfully created");
 }

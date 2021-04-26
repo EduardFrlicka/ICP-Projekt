@@ -65,9 +65,6 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
     if (!img.toImage().isNull()) {
         ImageForm *image = new ImageForm();
         image->SetImage(&img);
-        image->setMaximumWidth(img.width());
-        image->setMaximumHeight(img.height());
-
         image->show();
     } else {
         MessageForm *message = new MessageForm();
@@ -329,7 +326,7 @@ void window::on_actionSnapshot_triggered(bool checked) {
                 file.open(QIODevice::WriteOnly);
                 file.write(msg);
                 file.close();
-                
+
             } else {
                 out << msg.toStdString() << std::endl;
             }

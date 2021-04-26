@@ -2,8 +2,8 @@
 #define IMAGE_WINDOW_H
 
 #include "ui_image_form.h"
+#include <QGraphicsPixmapItem>
 #include <QWidget>
-
 class ImageForm : public QWidget, private Ui::ImageForm {
     Q_OBJECT
 

@@ -90,6 +90,7 @@ void window::on_subscribe_btn_clicked() {
         addNewTopic(this->subscribe_text->text());
         client.subscribe(this->subscribe_text->text().toStdString());
         this->setStatusBarText("Sucessfully added new topic");
+        this->subscribe_text->setText("");
         return;
     }
     this->setStatusBarText("Invalid topic name");

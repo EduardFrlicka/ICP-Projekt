@@ -65,7 +65,7 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
     if (!img.toImage().isNull()) {
         ImageForm *image = new ImageForm();
         image->SetImage(&img);
-        image->show();
+        image->showMaximized();
     } else {
         MessageForm *message = new MessageForm();
         message->SetText(msg);
@@ -114,14 +114,13 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     if (!img.toImage().isNull()) {
 
         item->setData(Qt::DisplayRole, "[image file ↓]");
-
         // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
         if (QString(msg).split("\n").count() > 1) {
-            item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ... [multiline message ↓]");
+            item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ...\n[multiline message ↓]");
         } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
-            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ... [long message ↓]");
+            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ...\n[long message ↓]");
         } else {
             item->setData(Qt::DisplayRole, msg);
         }
@@ -326,4 +325,5 @@ void window::closeEvent(QCloseEvent *event) {
     this->messages.clear();
     this->listWidget_all->clear();
     this->treeWidget->clear();
+    this->client.disconnect();
 }

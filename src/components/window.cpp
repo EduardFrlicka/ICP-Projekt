@@ -295,4 +295,7 @@ void window::on_actionSnapshot_triggered(bool checked) {
 
 void window::closeEvent(QCloseEvent *event) {
     std::cout << "Zatvaram sa" << std::endl;
+    this->messages.clear();
+    this->listWidget_all->clear();
+    this->treeWidget->clear();
 }

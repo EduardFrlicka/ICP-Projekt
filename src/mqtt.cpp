@@ -9,7 +9,13 @@ void mqtt_client::connect(std::string ADDRESS) {
 
     client = new mqtt::async_client(ADDRESS, QUuid::createUuid().toString().toStdString(), mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(3600)).mqtt_version(MQTTVERSION_5).clean_start(true).automatic_reconnect(true).finalize();
+    auto connOpts = mqtt::connect_options_builder()
+                        .keep_alive_interval(std::chrono::seconds(3600))
+                        .mqtt_version(MQTTVERSION_5)
+                        .clean_start(true)
+                        .automatic_reconnect(true)
+                        .connect_timeout(std::chrono::seconds(5))
+                        .finalize();
 
     try {
         auto tok = client->connect(connOpts);

@@ -5,7 +5,6 @@
 #include "QFileDialog"
 #include "image_window.h"
 #include "server_dialog.h"
-#include "subscribe_dialog.h"
 #include "ui_window.h"
 
 #include <QJsonDocument>

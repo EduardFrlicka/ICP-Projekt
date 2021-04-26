@@ -82,12 +82,17 @@ void window::on_listWidget_all_itemClicked(QListWidgetItem *item) {
 }
 
 void window::on_subscribe_btn_clicked() {
-    SubscribeDialog dialog;
-    if (dialog.exec() == QDialog::Rejected)
-        return;
+    // SubscribeDialog dialog;
+    // if (dialog.exec() == QDialog::Rejected)
+    //     return;
 
-    addNewTopic(dialog.getTopicName());
-    client.subscribe(dialog.getTopicName().toStdString());
+    if (this->subscribe_text->text().trimmed().size() != 0) {
+        addNewTopic(this->subscribe_text->text());
+        client.subscribe(this->subscribe_text->text().toStdString());
+        this->setStatusBarText("Sucessfully added new topic!");
+        return;
+    }
+    this->setStatusBarText("Invalid topic name");
 }
 
 // CLASS FUNCTIONS
@@ -279,5 +284,5 @@ void window::on_unsubscribe_btn_clicked() {
 }
 
 void window::setStatusBarText(QString msg) {
-    this->statusBar()->showMessage(msg, 10);
+    this->statusBar()->showMessage(msg, 1000);
 }

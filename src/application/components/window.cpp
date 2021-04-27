@@ -65,7 +65,7 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
     if (!img.toImage().isNull()) {
         ImageForm *image = new ImageForm();
         image->SetImage(&img);
-        image->showMaximized();
+        image->show();
     } else {
         MessageForm *message = new MessageForm();
         message->SetText(msg);
@@ -79,9 +79,6 @@ void window::on_listWidget_all_itemClicked(QListWidgetItem *item) {
 }
 
 void window::on_subscribe_btn_clicked() {
-    // SubscribeDialog dialog;
-    // if (dialog.exec() == QDialog::Rejected)
-    //     return;
 
     if (this->subscribe_text->text().trimmed().size() != 0) {
         addNewTopic(this->subscribe_text->text());
@@ -104,6 +101,8 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
         item->setData(Qt::DecorationRole, QColor::fromRgb(209, 252, 149));
     }
+    QDateTime dateTime = dateTime.currentDateTime();
+    QString currentTime = dateTime.toString("[HH:mm:ss] ");
 
     QPixmap img;
     img.loadFromData(msg);
@@ -113,16 +112,16 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     if (!img.toImage().isNull()) {
 
-        item->setData(Qt::DisplayRole, "[image file ↓]");
+        item->setData(Qt::DisplayRole, currentTime + "[image file ↓]");
         // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
         if (QString(msg).split("\n").count() > 1) {
-            item->setData(Qt::DisplayRole, QString(msg).split("\n")[0] + " ...\n[multiline message ↓]");
+            item->setData(Qt::DisplayRole, currentTime + QString(msg).split("\n")[0] + " ...\n[multiline message ↓]");
         } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
-            item->setData(Qt::DisplayRole, msg.left(MAX_MESSAGE_LINE_LENGTH) + " ...\n[long message ↓]");
+            item->setData(Qt::DisplayRole, currentTime + msg.left(MAX_MESSAGE_LINE_LENGTH) + " ...\n[long message ↓]");
         } else {
-            item->setData(Qt::DisplayRole, msg);
+            item->setData(Qt::DisplayRole, currentTime + msg);
         }
 
         // QtreeWiev LastMessage
@@ -132,6 +131,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         else
             last_message->setData(1, Qt::DisplayRole, msg);
     }
+
     item->setData(Qt::UserRole, msg);
 
     if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
@@ -150,7 +150,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
         delete listWidget_all->item(0);
 
     QListWidgetItem *item_to_all = item->clone();
-    item_to_all->setData(Qt::DisplayRole, "[" + topicName + "] - " + item_to_all->data(Qt::DisplayRole).value<QString>());
+    item_to_all->setData(Qt::DisplayRole, "[" + topicName + "]\n" + item_to_all->data(Qt::DisplayRole).value<QString>());
     listWidget_all->addItem(item_to_all);
     listWidget_all->scrollToBottom();
 }
@@ -286,6 +286,8 @@ void window::on_actionSnapshot_triggered(bool checked) {
 
     std::string root_dir = QFileDialog::getExistingDirectory(this, "Snapshot").toStdString();
     // QString file = QFileDialog::getSaveFileName(this, "Snapshot", "payload.txt","",nullptr, QFileDialog::ShowDirsOnly);
+    if (root_dir == "")
+        return;
 
     QMap<QString, QList<QListWidgetItem *>>::iterator i;
     std::filesystem::current_path(std::filesystem::path(root_dir));
@@ -318,6 +320,19 @@ void window::on_actionSnapshot_triggered(bool checked) {
     std::cout << "Succesfully created: " << root_dir << std::endl;
 
     this->setStatusBarText("Snapshot sucessfully created");
+}
+
+void window::on_addWidget_btn_clicked() {
+    switch (this->widget_combobox->currentIndex()) {
+    case 0: { // lights
+        LightWidget *item = new LightWidget();
+        this->widgets_layout->insertWidget(0, item);
+        break;
+    }
+    default: {
+        break;
+    }
+    }
 }
 
 void window::closeEvent(QCloseEvent *event) {

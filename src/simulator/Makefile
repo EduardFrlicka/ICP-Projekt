@@ -7,7 +7,7 @@
 # Flags for compiling
 CFLAGS:=-std=c++11 -Wall -Wextra -pedantic
 
-LFLAGS:=
+LFLAGS:=-lpaho-mqtt3c -lpaho-mqtt3a -lpaho-mqttpp3 #-lGL -lpthread 
 
 # Name of target binary file
 BINARY_NAME:=sim

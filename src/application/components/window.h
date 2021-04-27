@@ -4,21 +4,22 @@
 #include "../mqtt.h"
 #include "QFileDialog"
 #include "image_window.h"
+#include "light_widget.h"
+#include "message_window.h"
 #include "server_dialog.h"
 #include "ui_window.h"
-
+#include <QDateTime>
+#include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QSettings>
-
-#include "message_window.h"
-#include <QFile>
 #include <QMainWindow>
 #include <QMap>
+#include <QSettings>
 #include <QWidget>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+
 #define MAX_MESSAGE_HISTORY 50
 #define MAX_MESSAGE_LINE_LENGTH 50
 
@@ -49,6 +50,7 @@ class window : public QMainWindow, private Ui::window {
     void on_subscribe_btn_clicked();
     void on_unsubscribe_btn_clicked();
     void on_attachFile_btn_clicked();
+    void on_addWidget_btn_clicked();
 };
 
 #endif

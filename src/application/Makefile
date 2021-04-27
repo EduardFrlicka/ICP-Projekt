@@ -26,8 +26,8 @@ SRC=.
 
 # Compiler
 CC=g++
-MOC=moc-qt5
-UIC=uic-qt5
+MOC=moc
+UIC=uic
 
 # Suffix of files to compile (E.x.: c, cpp, c++)
 SUFFIX=cpp

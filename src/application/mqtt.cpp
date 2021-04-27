@@ -9,13 +9,7 @@ void mqtt_client::connect(std::string ADDRESS) {
 
     client = new mqtt::async_client(ADDRESS, QUuid::createUuid().toString().toStdString(), mqtt::create_options(MQTTVERSION_5));
 
-    auto connOpts = mqtt::connect_options_builder()
-                        .keep_alive_interval(std::chrono::seconds(3600))
-                        .mqtt_version(MQTTVERSION_5)
-                        .clean_start(true)
-                        .automatic_reconnect(true)
-                        .connect_timeout(std::chrono::seconds(5))
-                        .finalize();
+    auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(3600)).mqtt_version(MQTTVERSION_5).clean_start(true).connect_timeout(std::chrono::seconds(5)).finalize();
 
     try {
         auto tok = client->connect(connOpts);
@@ -27,9 +21,13 @@ void mqtt_client::connect(std::string ADDRESS) {
         exit(1);
     }
 
-    client->set_connection_lost_handler([this](const std::string &) { this->client->reconnect()->wait(); });
-
     client->set_message_callback([this](mqtt::const_message_ptr msg) { emit this->getMessage(QByteArray::fromStdString(msg->get_payload_str()), QByteArray::fromStdString(msg->get_topic())); });
+    client->set_connection_lost_handler([](const std::string &) {
+        QMessageBox messageBox;
+        messageBox.critical(0, "Error", "Connection lost restart application!");
+        messageBox.setFixedSize(500, 200);
+        exit(1);
+    });
 }
 
 void mqtt_client::sendMessage(QByteArray msg) {

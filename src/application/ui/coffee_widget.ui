@@ -99,6 +99,12 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="icon_label">
+          <property name="minimumSize">
+           <size>
+            <width>75</width>
+            <height>75</height>
+           </size>
+          </property>
           <property name="text">
            <string>ICON</string>
           </property>

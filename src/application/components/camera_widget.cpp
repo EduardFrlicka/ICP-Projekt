@@ -8,6 +8,11 @@ CameraWidget::CameraWidget(QWidget *parent, mqtt_client *client, QString name, Q
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
+    QPixmap p(":/camera.png");
+    int w = this->icon_label->width();
+    int h = this->icon_label->height();
+    this->icon_label->setPixmap(p.scaled(w, h, Qt::KeepAspectRatio));
+
     connect(client, SIGNAL(getMessage(QByteArray, QString)), this, SLOT(addMessage(QByteArray, QString)));
 }
 

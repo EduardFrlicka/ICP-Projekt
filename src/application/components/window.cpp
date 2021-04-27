@@ -97,9 +97,10 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     QListWidgetItem *item = new QListWidgetItem();
     item->setFlags(Qt::ItemIsEnabled);
     item->setData(Qt::DecorationRole, QPalette::Window);
+    item->setData(Qt::DecorationRole, QIcon(":/person.ico"));
+
     if (my_message) {
         item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
-        item->setData(Qt::DecorationRole, QColor::fromRgb(209, 252, 149));
     }
     QDateTime dateTime = dateTime.currentDateTime();
     QString currentTime = dateTime.toString("[HH:mm:ss] ");
@@ -139,7 +140,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     messages[topicName].append(item);
 
-    // Add item to current wiew and scroll down
+    // Add item to current wiew
     if (topicName == QByteArray::fromStdString(this->client.currentTopic)) {
         listWidget->addItem(item);
         listWidget->scrollToBottom();
@@ -151,6 +152,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     QListWidgetItem *item_to_all = item->clone();
     item_to_all->setData(Qt::DisplayRole, "[" + topicName + "]\n" + item_to_all->data(Qt::DisplayRole).value<QString>());
+    item_to_all->setData(Qt::DecorationRole, QIcon(":/person.ico"));
     listWidget_all->addItem(item_to_all);
     listWidget_all->scrollToBottom();
 }

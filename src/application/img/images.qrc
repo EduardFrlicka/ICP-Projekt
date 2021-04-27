@@ -1,0 +1,10 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>person.ico</file>
+    <file>camera.png</file>
+    <file>coffee-cup.png</file>
+    <file>lightbulb.png</file>
+    <file>thermometer.png</file>
+    <file>thermostat.png</file>
+</qresource>
+</RCC>

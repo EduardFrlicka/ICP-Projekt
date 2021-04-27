@@ -24,5 +24,10 @@ device::device(string name, int repeat, string topic) {
         std::cout << "Error with connection to server: " << name << " | Error: " << exc.what() << std::endl;
     }
 
+    auto subOpts = mqtt::subscribe_options(true);
+    this->client->subscribe(topic, 0, subOpts)->wait();
+
     client->set_connection_lost_handler([this](const std::string &) { std::cout << "\n***Connection lost: " << this->name << " | Topic: " << this->topic << "***\n" << std::endl; });
+
+    client->set_message_callback([this](mqtt::const_message_ptr msg) { std::cout << "Došla sprava: " << msg->to_string() << std::endl; });
 }

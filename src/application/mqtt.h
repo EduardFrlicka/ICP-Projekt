@@ -7,12 +7,11 @@
 
 #include "mqtt/async_client.h"
 
-
 #include <QMessageBox>
 #include <QUuid>
 
 #define NO_LOCAL true
-#define QOS 1
+#define QOS 0
 
 class mqtt_client : public QWidget {
     Q_OBJECT

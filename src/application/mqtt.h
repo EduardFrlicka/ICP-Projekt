@@ -6,8 +6,7 @@
 #include "string.h"
 
 #include "mqtt/async_client.h"
-#include "mqtt/client.h"
-#include "mqtt/topic.h"
+
 
 #include <QMessageBox>
 #include <QUuid>

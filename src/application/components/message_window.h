@@ -4,7 +4,6 @@
 #include "ui_message.h"
 #include <QWidget>
 
-
 class MessageForm : public QWidget, private Ui::MessageForm {
     Q_OBJECT
 

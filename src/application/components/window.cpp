@@ -323,16 +323,63 @@ void window::on_actionSnapshot_triggered(bool checked) {
 }
 
 void window::on_addWidget_btn_clicked() {
+    auto name = widget_name->text();
+    auto topic = widget_topic->text();
+
+    if (name.trimmed().size() == 0 || topic.trimmed().size() == 0) {
+        setStatusBarText("Name and topic is required!");
+        return;
+    }
+
     switch (this->widget_combobox->currentIndex()) {
     case 0: { // lights
-        LightWidget *item = new LightWidget();
+        LightWidget *item = new LightWidget(this, &client, name, topic);
+        addNewTopic(topic);
+        client.subscribe(topic.toStdString());
+
+        this->widgets_layout->insertWidget(0, item);
+        break;
+    }
+    case 1: { // thermostat
+        ThermostatWidget *item = new ThermostatWidget(this, &client, name, topic);
+        addNewTopic(topic);
+        client.subscribe(topic.toStdString());
+
+        this->widgets_layout->insertWidget(0, item);
+        break;
+    }
+    case 2: { // thermostat
+        CoffeWidget *item = new CoffeWidget(this, &client, name, topic);
+        addNewTopic(topic);
+        client.subscribe(topic.toStdString());
+
+        this->widgets_layout->insertWidget(0, item);
+        break;
+    }
+    case 3: { // thermometer
+        ThermometerWidget *item = new ThermometerWidget(this, &client, name, topic);
+        addNewTopic(topic);
+        client.subscribe(topic.toStdString());
+
+        this->widgets_layout->insertWidget(0, item);
+        break;
+    }
+    case 4: { // camera
+        CameraWidget *item = new CameraWidget(this, &client, name, topic);
+        addNewTopic(topic);
+        client.subscribe(topic.toStdString());
+
         this->widgets_layout->insertWidget(0, item);
         break;
     }
     default: {
+        return;
         break;
     }
     }
+    widget_name->setText("");
+    widget_topic->setText("");
+    this->setStatusBarText("Sucessfully added new widget");
 }
 
 void window::closeEvent(QCloseEvent *event) {

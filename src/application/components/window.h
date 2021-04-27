@@ -3,10 +3,14 @@
 
 #include "../mqtt.h"
 #include "QFileDialog"
+#include "camera_widget.h"
+#include "coffee_widget.h"
 #include "image_window.h"
 #include "light_widget.h"
 #include "message_window.h"
 #include "server_dialog.h"
+#include "thermometer_widget.h"
+#include "thermostat_widget.h"
 #include "ui_window.h"
 #include <QDateTime>
 #include <QFile>
@@ -19,7 +23,6 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
 #define MAX_MESSAGE_HISTORY 50
 #define MAX_MESSAGE_LINE_LENGTH 50
 

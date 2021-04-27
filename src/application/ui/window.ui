@@ -424,10 +424,20 @@
             </item>
             <item>
              <property name="text">
-              <string>Wattmeter</string>
+              <string>Camera</string>
              </property>
             </item>
            </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="widget_name"/>
           </item>
           <item>
            <widget class="QLabel" name="label">
@@ -437,7 +447,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="widget_topic">
             <property name="placeholderText">
              <string>e.g. home/cofeemachine</string>
             </property>

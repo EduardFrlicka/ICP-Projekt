@@ -1,26 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LightWidget</class>
- <widget class="QWidget" name="LightWidget">
+ <class>CameraWidget</class>
+ <widget class="QWidget" name="CameraWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>150</height>
+    <height>172</height>
    </rect>
-  </property>
-  <property name="focusPolicy">
-   <enum>Qt::NoFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="1">
+   <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::Panel</enum>
@@ -39,10 +33,24 @@
        <layout class="QGridLayout" name="gridLayout_2" columnstretch="3,10">
         <item row="1" column="1">
          <layout class="QGridLayout" name="gridLayout">
-          <item row="1" column="0">
-           <widget class="QLabel" name="name_label">
+          <item row="4" column="1">
+           <widget class="QLabel" name="topic_text">
             <property name="text">
-             <string>Name</string>
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="topic_label">
+            <property name="text">
+             <string>Topic</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="status_text">
+            <property name="text">
+             <string>Unknown</string>
             </property>
            </widget>
           </item>
@@ -53,14 +61,21 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QPushButton" name="switch_btn">
+          <item row="1" column="1">
+           <widget class="QLabel" name="name_text">
             <property name="text">
-             <string>Switch lights</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="1" column="0">
+           <widget class="QLabel" name="name_label">
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -73,34 +88,6 @@
             </property>
            </spacer>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="topic_label">
-            <property name="text">
-             <string>Topic</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="name_text">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="status_text">
-            <property name="text">
-             <string>Unknown</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="topic_text">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
         <item row="1" column="0">
@@ -110,6 +97,13 @@
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="set_btn">
+          <property name="text">
+           <string>Show last image</string>
           </property>
          </widget>
         </item>

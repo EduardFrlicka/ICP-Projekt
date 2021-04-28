@@ -1,3 +1,12 @@
+/**
+ * @file mqtt.cpp
+ * @authors Peter Zdravecký, Eduard Frlička
+ * @version 0.1
+ * @date 2021-04-28
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #include "mqtt.h"
 
 mqtt_client::mqtt_client() {
@@ -12,8 +21,7 @@ void mqtt_client::connect(std::string ADDRESS) {
     auto connOpts = mqtt::connect_options_builder().keep_alive_interval(std::chrono::seconds(3600)).mqtt_version(MQTTVERSION_5).clean_start(true).connect_timeout(std::chrono::seconds(5)).finalize();
 
     try {
-        auto tok = client->connect(connOpts);
-        tok->wait();
+        client->connect(connOpts)->wait();
     } catch (const mqtt::exception &exc) {
         QMessageBox messageBox;
         messageBox.critical(0, "Error", exc.what());
@@ -66,7 +74,6 @@ void mqtt_client::setCurrentTopic(std::string topic) {
 }
 
 void mqtt_client::disconnect() {
-
     try {
         client->disconnect()->wait();
     } catch (const mqtt::exception &exc) {

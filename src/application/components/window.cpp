@@ -1,3 +1,12 @@
+/**
+ * @file window.cpp
+ * @authors Peter Zdravecký, Eduard Frlička
+ * @version 0.1
+ * @date 2021-04-28
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #include "window.h"
 
 window::window(QWidget *parent) : QMainWindow(parent) {
@@ -18,8 +27,6 @@ window::window(QWidget *parent) : QMainWindow(parent) {
     loadConfig();
 }
 
-// SLOTS
-
 void window::on_send_btn_clicked() {
     auto message = textEdit->toPlainText().toStdString();
 
@@ -27,6 +34,7 @@ void window::on_send_btn_clicked() {
         return;
 
     QByteArray message_data(message.c_str(), message.size());
+
     client.sendMessage(message_data);
     this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic), 1);
 
@@ -40,7 +48,6 @@ void window::on_attachFile_btn_clicked() {
         return;
 
     QByteArray message_data;
-    // open file
     std::ifstream myfile(fileNames[0].toStdString());
 
     // write image data to message
@@ -49,6 +56,7 @@ void window::on_attachFile_btn_clicked() {
         message_data.append(byte);
     }
 
+    // send image
     client.sendMessage(message_data);
     this->addMessage(message_data, QByteArray::fromStdString(this->client.currentTopic), 1);
 }
@@ -76,12 +84,15 @@ void window::on_listWidget_itemClicked(QListWidgetItem *item) {
 }
 
 void window::on_listWidget_all_itemClicked(QListWidgetItem *item) {
-
     on_listWidget_itemClicked(item);
 }
 
 void window::on_subscribe_btn_clicked() {
 
+    if (this->subscribe_text->text().contains("#")) {
+        this->setStatusBarText("Character # is not supported in topic name");
+        return;
+    }
     if (this->subscribe_text->text().trimmed().size() != 0) {
         addNewTopic(this->subscribe_text->text());
         client.subscribe(this->subscribe_text->text().toStdString());
@@ -92,42 +103,43 @@ void window::on_subscribe_btn_clicked() {
     this->setStatusBarText("Invalid topic name");
 }
 
-// CLASS FUNCTIONS
-
 void window::addMessage(QByteArray msg, QString topicName, int my_message) {
-
     QListWidgetItem *item = new QListWidgetItem();
+    int i;
+    // find tree widget of current topic
+    QTreeWidgetItem *last_message = findTopicRecursive(topicName, &i);
+
+    // sets default options
     item->setFlags(Qt::ItemIsEnabled);
     item->setData(Qt::DecorationRole, QPalette::Window);
     item->setData(Qt::DecorationRole, QIcon(":/person.ico"));
 
+    // change background color on my message
     if (my_message) {
         item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
     }
+
     QDateTime dateTime = dateTime.currentDateTime();
     QString currentTime = dateTime.toString("[HH:mm:ss] ");
 
     QPixmap img;
     img.loadFromData(msg);
 
-    int i;
-    QTreeWidgetItem *last_message = findTopicRecursive(topicName, &i);
-
+    // try parse message payload to image
     if (!img.toImage().isNull()) {
-
+        // set display text of item for image file
         item->setData(Qt::DisplayRole, currentTime + "[image file ↓]");
-        // QtreeWiev LastMessage
         last_message->setData(1, Qt::DisplayRole, "[image file]");
     } else {
-        if (QString(msg).split("\n").count() > 1) {
+        if (QString(msg).split("\n").count() > 1) { // check for multiline message
             item->setData(Qt::DisplayRole, currentTime + QString(msg).split("\n")[0] + " ...\n[multiline message ↓]");
-        } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) {
+        } else if (msg.length() > MAX_MESSAGE_LINE_LENGTH) { // check for too long message
             item->setData(Qt::DisplayRole, currentTime + msg.left(MAX_MESSAGE_LINE_LENGTH) + " ...\n[long message ↓]");
-        } else {
+        } else { // normal message
             item->setData(Qt::DisplayRole, currentTime + msg);
         }
 
-        // QtreeWiev LastMessage
+        // show in widget tree only first line of arrived message
         auto message_lines = QString(msg).split("\n");
         if (message_lines.count() > 1)
             last_message->setData(1, Qt::DisplayRole, message_lines[0] + " ... [multiline message]");
@@ -135,23 +147,26 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
             last_message->setData(1, Qt::DisplayRole, msg);
     }
 
+    // set message data payload to custom variable in item
     item->setData(Qt::UserRole, msg);
 
+    // append new message to messages history
     if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
         messages[topicName].removeFirst();
 
     messages[topicName].append(item);
 
-    // Add item to current wiew
+    // add item to current wiew
     if (topicName == QByteArray::fromStdString(this->client.currentTopic)) {
         listWidget->addItem(item);
         listWidget->scrollToBottom();
     }
 
-    // All messages view
+    // all messages view
     if (listWidget_all->count() + 1 > MAX_MESSAGE_HISTORY)
         delete listWidget_all->item(0);
 
+    // append arrived message to list of all messages
     QListWidgetItem *item_to_all = item->clone();
     item_to_all->setData(Qt::DisplayRole, "[" + topicName + "]\n" + item_to_all->data(Qt::DisplayRole).value<QString>());
     item_to_all->setData(Qt::DecorationRole, QIcon(":/person.ico"));
@@ -228,13 +243,17 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
         return;
 
     QJsonObject data = item->data(column, Qt::UserRole).value<QJsonObject>();
+
     while (this->listWidget->count() > 0) {
         this->listWidget->takeItem(0);
     }
+
     if (data["isSubscribed"].toBool()) {
         client.setCurrentTopic(data["topicName"].toString().toStdString());
+
         for (auto item : messages[data["topicName"].toString()])
             this->listWidget->addItem(item);
+
         // Enable panel
         textEdit->setEnabled(1);
         send_btn->setEnabled(1);
@@ -243,6 +262,7 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
         unsubscribe_btn->setEnabled(1);
     } else {
         client.setCurrentTopic("");
+
         // Disable panel
         textEdit->setEnabled(0);
         send_btn->setEnabled(0);
@@ -269,11 +289,15 @@ void window::on_unsubscribe_btn_clicked() {
     if (topic->childCount() == 0)
         delete topic;
 
-    // clear all
+    // clear all messages from listWidget
     while (this->listWidget->count() > 0) {
         this->listWidget->takeItem(0);
     }
+
+    // delete topic messages history
     messages[QString::fromStdString(this->client.currentTopic)].clear();
+
+    // disable panel
     unsubscribe_btn->setEnabled(0);
     textEdit->setEnabled(0);
     send_btn->setEnabled(0);
@@ -325,6 +349,7 @@ void window::on_actionSnapshot_triggered(bool checked) {
 
 void window::on_addWidget_btn_clicked() {
     QSettings settings;
+
     QString name = widget_name->text();
     QString topic = widget_topic->text();
     int type = this->widget_combobox->currentIndex();
@@ -338,6 +363,9 @@ void window::on_addWidget_btn_clicked() {
         settings.endGroup();
         settings.setValue("widget_count", widgetID.toInt() + 1);
     }
+
+    widget_name->setText("");
+    widget_topic->setText("");
 }
 
 int window::addWidget(QString name, QString topic, int type, QString widgetID) {
@@ -345,6 +373,11 @@ int window::addWidget(QString name, QString topic, int type, QString widgetID) {
 
     if (name.trimmed().size() == 0 || topic.trimmed().size() == 0) {
         setStatusBarText("Name and topic is required!");
+        return;
+    }
+
+    if (topic.contains("#")) {
+        this->setStatusBarText("Character # is not supported in topic name");
         return;
     }
 
@@ -394,10 +427,8 @@ int window::addWidget(QString name, QString topic, int type, QString widgetID) {
         break;
     }
     }
-    widget_name->setText("");
-    widget_topic->setText("");
-    this->setStatusBarText("Sucessfully added new widget");
 
+    this->setStatusBarText("Sucessfully added new widget");
     return true;
 }
 
@@ -410,6 +441,7 @@ void window::closeEvent(QCloseEvent *event) {
 
 void window::loadConfig() {
     QSettings settings;
+
     if (!settings.contains("widget_count"))
         settings.setValue("widget_count", 0);
 

@@ -1,10 +1,10 @@
 #include "light_widget.h"
 
-LightWidget::LightWidget(QWidget *parent, mqtt_client *client, QString name, QString topic) : QWidget(parent) {
+LightWidget::LightWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID) : QWidget(parent) {
     setupUi(this);
     this->name = name;
     this->topic = topic;
-
+    this->widgetID = widgetID;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -35,5 +35,8 @@ void LightWidget::on_switch_btn_clicked() {
 }
 
 void LightWidget::on_delete_btn_clicked() {
+    QSettings settings;
+    settings.beginGroup("widget" + widgetID);
+    settings.remove("");
     delete this;
 }

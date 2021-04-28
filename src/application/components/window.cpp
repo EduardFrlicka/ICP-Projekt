@@ -14,6 +14,8 @@ window::window(QWidget *parent) : QMainWindow(parent) {
 
     connect(&client, SIGNAL(getMessage(QByteArray, QString)), this, SLOT(addMessage(QByteArray, QString)));
     connect(&client, SIGNAL(sendStatusText(QString)), this, SLOT(setStatusBarText(QString)));
+
+    loadConfig();
 }
 
 // SLOTS
@@ -325,17 +327,33 @@ void window::on_actionSnapshot_triggered(bool checked) {
 }
 
 void window::on_addWidget_btn_clicked() {
-    auto name = widget_name->text();
-    auto topic = widget_topic->text();
+    QSettings settings;
+    QString name = widget_name->text();
+    QString topic = widget_topic->text();
+    int type = this->widget_combobox->currentIndex();
+
+    if (addWidget(name, topic, type, settings.value("widget_count").toString())) {
+        auto widgetID = settings.value("widget_count");
+        settings.beginGroup("widget" + widgetID.toString());
+        settings.setValue("name", name);
+        settings.setValue("topic", topic);
+        settings.setValue("type", type);
+        settings.endGroup();
+        settings.setValue("widget_count", widgetID.toInt() + 1);
+    }
+}
+
+int window::addWidget(QString name, QString topic, int type, QString widgetID) {
+    QSettings settings;
 
     if (name.trimmed().size() == 0 || topic.trimmed().size() == 0) {
         setStatusBarText("Name and topic is required!");
         return;
     }
 
-    switch (this->widget_combobox->currentIndex()) {
+    switch (type) {
     case 0: { // lights
-        LightWidget *item = new LightWidget(this, &client, name, topic);
+        LightWidget *item = new LightWidget(this, &client, name, topic, widgetID);
         addNewTopic(topic);
         client.subscribe(topic.toStdString());
 
@@ -343,7 +361,7 @@ void window::on_addWidget_btn_clicked() {
         break;
     }
     case 1: { // thermostat
-        ThermostatWidget *item = new ThermostatWidget(this, &client, name, topic);
+        ThermostatWidget *item = new ThermostatWidget(this, &client, name, topic, widgetID);
         addNewTopic(topic);
         client.subscribe(topic.toStdString());
 
@@ -351,7 +369,7 @@ void window::on_addWidget_btn_clicked() {
         break;
     }
     case 2: { // thermostat
-        CoffeWidget *item = new CoffeWidget(this, &client, name, topic);
+        CoffeWidget *item = new CoffeWidget(this, &client, name, topic, widgetID);
         addNewTopic(topic);
         client.subscribe(topic.toStdString());
 
@@ -359,7 +377,7 @@ void window::on_addWidget_btn_clicked() {
         break;
     }
     case 3: { // thermometer
-        ThermometerWidget *item = new ThermometerWidget(this, &client, name, topic);
+        ThermometerWidget *item = new ThermometerWidget(this, &client, name, topic, widgetID);
         addNewTopic(topic);
         client.subscribe(topic.toStdString());
 
@@ -367,7 +385,7 @@ void window::on_addWidget_btn_clicked() {
         break;
     }
     case 4: { // camera
-        CameraWidget *item = new CameraWidget(this, &client, name, topic);
+        CameraWidget *item = new CameraWidget(this, &client, name, topic, widgetID);
         addNewTopic(topic);
         client.subscribe(topic.toStdString());
 
@@ -375,13 +393,15 @@ void window::on_addWidget_btn_clicked() {
         break;
     }
     default: {
-        return;
+        return false;
         break;
     }
     }
     widget_name->setText("");
     widget_topic->setText("");
     this->setStatusBarText("Sucessfully added new widget");
+
+    return true;
 }
 
 void window::closeEvent(QCloseEvent *event) {
@@ -390,4 +410,21 @@ void window::closeEvent(QCloseEvent *event) {
     this->listWidget_all->clear();
     this->treeWidget->clear();
     this->client.disconnect();
+}
+
+void window::loadConfig() {
+    QSettings settings;
+    if (!settings.contains("widget_count"))
+        settings.setValue("widget_count", 0);
+
+    for (auto group : settings.childGroups()) {
+        std::cout << group.toStdString() << std::endl;
+        if (group.contains("widget")) {
+            settings.beginGroup(group);
+            QRegExp rx("\\d+");
+            rx.indexIn(group);
+            addWidget(settings.value("name").toString(), settings.value("topic").toString(), settings.value("type").toInt(), rx.capturedTexts()[0]);
+            settings.endGroup();
+        }
+    }
 }

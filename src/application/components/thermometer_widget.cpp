@@ -1,10 +1,10 @@
 #include "thermometer_widget.h"
 
-ThermometerWidget::ThermometerWidget(QWidget *parent, mqtt_client *client, QString name, QString topic) : QWidget(parent) {
+ThermometerWidget::ThermometerWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID) : QWidget(parent) {
     setupUi(this);
     this->name = name;
     this->topic = topic;
-
+    this->widgetID = widgetID;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -25,5 +25,8 @@ void ThermometerWidget::addMessage(QByteArray msg, QString topicName) {
 }
 
 void ThermometerWidget::on_delete_btn_clicked() {
+    QSettings settings;
+    settings.beginGroup("widget" + widgetID);
+    settings.remove("");
     delete this;
 }

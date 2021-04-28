@@ -1,10 +1,10 @@
 #include "thermostat_widget.h"
 
-ThermostatWidget::ThermostatWidget(QWidget *parent, mqtt_client *client, QString name, QString topic) : QWidget(parent) {
+ThermostatWidget::ThermostatWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID) : QWidget(parent) {
     setupUi(this);
     this->name = name;
     this->topic = topic;
-
+    this->widgetID = widgetID;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -30,5 +30,8 @@ void ThermostatWidget::on_set_btn_clicked() {
 }
 
 void ThermostatWidget::on_delete_btn_clicked() {
+    QSettings settings;
+    settings.beginGroup("widget" + widgetID);
+    settings.remove("");
     delete this;
 }

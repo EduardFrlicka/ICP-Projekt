@@ -5,14 +5,16 @@
 #include "image_window.h"
 #include "ui_camera_widget.h"
 #include <QDateTime>
+#include <QSettings>
 #include <QWidget>
 class CameraWidget : public QWidget, private Ui::CameraWidget {
     Q_OBJECT
 
   public:
-    explicit CameraWidget(QWidget *parent, mqtt_client *client, QString name, QString topic);
+    explicit CameraWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID);
     QString name;
     QString topic;
+    QString widgetID;
     QPixmap img;
 
   public slots:

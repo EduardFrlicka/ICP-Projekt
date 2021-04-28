@@ -4,15 +4,17 @@
 #include "../mqtt.h"
 #include "ui_thermostat_widget.h"
 #include <QDateTime>
+#include <QSettings>
 #include <QWidget>
 
 class ThermostatWidget : public QWidget, private Ui::ThermostatWidget {
     Q_OBJECT
 
   public:
-    explicit ThermostatWidget(QWidget *parent, mqtt_client *client, QString name, QString topic);
+    explicit ThermostatWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID);
     QString name;
     QString topic;
+    QString widgetID;
 
   public slots:
     void addMessage(QByteArray msg, QString topicName);

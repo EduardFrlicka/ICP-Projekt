@@ -4,14 +4,16 @@
 #include "../mqtt.h"
 #include "ui_light_widget.h"
 #include <QDateTime>
+#include <QSettings>
 #include <QWidget>
 class LightWidget : public QWidget, private Ui::LightWidget {
     Q_OBJECT
 
   public:
-    explicit LightWidget(QWidget *parent, mqtt_client *client, QString name, QString topic);
+    explicit LightWidget(QWidget *parent, mqtt_client *client, QString name, QString topic, QString widgetID);
     QString name;
     QString topic;
+    QString widgetID;
     QByteArray state = "off";
 
   public slots:

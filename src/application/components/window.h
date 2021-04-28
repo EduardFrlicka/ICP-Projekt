@@ -37,7 +37,8 @@ class window : public QMainWindow, private Ui::window {
     QMap<QString, QList<QListWidgetItem *>> messages;
     void addNewTopic(QString topicName);
     void closeEvent(QCloseEvent *event);
-
+    void loadConfig();
+    int addWidget(QString name, QString topic, int type, QString widgetID);
   public slots:
     void addMessage(QByteArray msg, QString topicName, int my_message = 0);
     void setStatusBarText(QString msg);

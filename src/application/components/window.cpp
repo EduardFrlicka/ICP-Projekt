@@ -296,7 +296,6 @@ void window::on_actionSnapshot_triggered(bool checked) {
     QMap<QString, QList<QListWidgetItem *>>::iterator i;
     std::filesystem::current_path(std::filesystem::path(root_dir));
     for (i = messages.begin(); i != messages.end(); ++i) {
-        std::cout << i.key().toStdString() << std::endl;
         std::filesystem::create_directory(i.key().toStdString());
         auto curr_dir = root_dir + "/" + i.key().toStdString();
         std::ofstream out(curr_dir + "/payload.txt");
@@ -320,8 +319,6 @@ void window::on_actionSnapshot_triggered(bool checked) {
         }
         out.close();
     }
-
-    std::cout << "Succesfully created: " << root_dir << std::endl;
 
     this->setStatusBarText("Snapshot sucessfully created");
 }
@@ -405,7 +402,6 @@ int window::addWidget(QString name, QString topic, int type, QString widgetID) {
 }
 
 void window::closeEvent(QCloseEvent *event) {
-    std::cout << "Zatvaram sa" << std::endl;
     this->messages.clear();
     this->listWidget_all->clear();
     this->treeWidget->clear();
@@ -418,7 +414,6 @@ void window::loadConfig() {
         settings.setValue("widget_count", 0);
 
     for (auto group : settings.childGroups()) {
-        std::cout << group.toStdString() << std::endl;
         if (group.contains("widget")) {
             settings.beginGroup(group);
             QRegExp rx("\\d+");

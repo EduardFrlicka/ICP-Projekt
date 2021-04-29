@@ -34,7 +34,7 @@
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
-        <string>Dashboard</string>
+        <string>Explorer</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="0" column="0">
@@ -319,7 +319,7 @@
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
-        <string>Widgets</string>
+        <string>Dashboard</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4" columnstretch="10,4">
         <item row="0" column="0">

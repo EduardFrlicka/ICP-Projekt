@@ -9,7 +9,7 @@
  */
 #include "window.h"
 
-window::window(QWidget *parent) : QMainWindow(parent) {
+window::window(int maxMessages, QWidget *parent) : QMainWindow(parent) {
     setupUi(this);
 
     ServerDialog dialog;
@@ -24,6 +24,7 @@ window::window(QWidget *parent) : QMainWindow(parent) {
     connect(&client, SIGNAL(getMessage(QByteArray, QString)), this, SLOT(addMessage(QByteArray, QString)));
     connect(&client, SIGNAL(sendStatusText(QString)), this, SLOT(setStatusBarText(QString)));
 
+    this->maxMessageHistory = maxMessages;
     loadConfig();
 }
 
@@ -151,7 +152,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     item->setData(Qt::UserRole, msg);
 
     // append new message to messages history
-    if (messages[topicName].size() + 1 > MAX_MESSAGE_HISTORY)
+    if (messages[topicName].size() + 1 > this->maxMessageHistory)
         messages[topicName].removeFirst();
 
     messages[topicName].append(item);
@@ -163,7 +164,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     }
 
     // all messages view
-    if (listWidget_all->count() + 1 > MAX_MESSAGE_HISTORY)
+    if (listWidget_all->count() + 1 > this->maxMessageHistory)
         delete listWidget_all->item(0);
 
     // append arrived message to list of all messages

@@ -34,7 +34,6 @@
 #include <fstream>
 #include <iostream>
 
-#define MAX_MESSAGE_HISTORY 50
 #define MAX_MESSAGE_LINE_LENGTH 50
 
 class window : public QMainWindow, private Ui::window {
@@ -49,7 +48,7 @@ class window : public QMainWindow, private Ui::window {
      *
      * @param parent
      */
-    explicit window(QWidget *parent = nullptr);
+    explicit window(int maxMessages, QWidget *parent = nullptr);
 
     /**
      * @brief Triggers when apllication is closed.
@@ -66,6 +65,8 @@ class window : public QMainWindow, private Ui::window {
      *
      */
     QMap<QString, QList<QListWidgetItem *>> messages;
+
+    int maxMessageHistory;
 
   public slots:
     /**

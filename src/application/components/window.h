@@ -158,12 +158,19 @@ class window : public QMainWindow, private Ui::window {
 
     /**
      * @brief Handle unsubscribe btn click event
-     * Unsubscribe mqtt topic and delete node from treeWidget (only if list node).
-     * Disable panel
+     * Calls unsubscribe_topic() with current topic variable
      *
      */
     void on_unsubscribe_btn_clicked();
 
+    /**
+     * @brief Unsubscribe handler
+     * Unsubscribe mqtt topic and delete node from treeWidget (only if list node).
+     * Disable panel
+     *
+     * @param topicName name of topic to be unsubscribed
+     */
+    void unsubscribe_topic(QString topicName);
     /**
      * @brief Handle attachFile btn click event
      * Sends choosen image to current topic
@@ -189,6 +196,9 @@ class window : public QMainWindow, private Ui::window {
      * @return 0 failed
      */
     int addWidget(QString name, QString topic, int type, QString widgetID);
+
+  signals:
+    void unsubscribe_signal(QString topicName);
 };
 
 #endif

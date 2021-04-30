@@ -57,12 +57,28 @@ class LightWidget : public QWidget, private Ui::LightWidget {
     void on_switch_btn_clicked();
 
     /**
-     * @brief Delete widget from layout and delete from config file.
+     * @brief Handle unsubscribe signal from main application
+     * If topicName is same as widget topic, delete widget
+     *
+     * @param topicName
+     */
+    void handle_unsubscribe(QString topicName);
+
+    /**
+     * @brief Handle delete button click
+     * Calls deleteWidget() function
      *
      */
     void on_delete_btn_clicked();
 
+    /**
+     * @brief Delete widget from layout and delete from config file.
+     *
+     */
+    void deleteWidget();
+
   signals:
     void sendMessage(QByteArray, QString, int my_message);
+    void widget_deleted_signal(QString topicName);
 };
 #endif

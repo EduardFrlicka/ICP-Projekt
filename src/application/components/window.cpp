@@ -274,10 +274,15 @@ void window::on_treeWidget_itemClicked(QTreeWidgetItem *item, int column) {
 }
 
 void window::on_unsubscribe_btn_clicked() {
-    int i;
-    QTreeWidgetItem *topic = findTopicRecursive(QString::fromStdString(this->client.currentTopic), &i);
+    emit this->unsubscribe_signal(QString::fromStdString(this->client.currentTopic));
+    unsubscribe_topic(QString::fromStdString(this->client.currentTopic));
+}
 
-    if (this->client.unsubscribe(this->client.currentTopic)) {
+void window::unsubscribe_topic(QString topicName) {
+    int i;
+    QTreeWidgetItem *topic = findTopicRecursive(topicName, &i);
+
+    if (this->client.unsubscribe(topicName.toStdString())) {
         unsubscribe_btn->setDisabled(1);
         return;
     }
@@ -296,7 +301,7 @@ void window::on_unsubscribe_btn_clicked() {
     }
 
     // delete topic messages history
-    messages[QString::fromStdString(this->client.currentTopic)].clear();
+    messages[topicName].clear();
 
     // disable panel
     unsubscribe_btn->setEnabled(0);

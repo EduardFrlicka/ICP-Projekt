@@ -16,7 +16,7 @@ Options:
 ## Technologies used
 
 Qt version 5.12.8  
-[MQTT paho for c++](https://github.com/eclipse/paho.mqtt.cpp) | Paho C++ Version 1.2.0 | Requires Paho C v1.3.8
+[MQTT paho for c++](https://github.com/eclipse/paho.mqtt.cpp) | Paho C++ Version 1.2.0 | Requires Paho C v1.3.8  
 c++ 17
 
 ## Authors

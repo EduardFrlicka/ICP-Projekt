@@ -117,7 +117,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
 
     // change background color on my message
     if (my_message) {
-        item->setData(Qt::BackgroundRole, QColor::fromRgb(209, 252, 149));
+        item->setData(Qt::BackgroundRole, QColor(Qt::green));
     }
 
     QDateTime dateTime = dateTime.currentDateTime();

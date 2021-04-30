@@ -10,16 +10,16 @@ The application met all the requirements of the assignment.
 ```
 Options:
 -h, --help                 Displays help.
--m, --max-messages <count> Set message history limit
+-m, --max-messages <count> Set message history limit.
 ```
 
-## Technologies used:
+## Technologies used
 
 Qt version 5.12.8  
-[MQTT paho for c++](https://github.com/eclipse/paho.mqtt.cpp)  
+[MQTT paho for c++](https://github.com/eclipse/paho.mqtt.cpp) | Paho C++ Version 1.2.0 | Requires Paho C v1.3.8
 c++ 17
 
-## Authors:
+## Authors
 
 Peter Zdravecký - xzdrav00  
 Euard Frlička - xfrlic00

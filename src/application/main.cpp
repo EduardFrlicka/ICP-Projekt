@@ -19,15 +19,27 @@ int main(int argc, char *argv[]) {
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.setApplicationDescription("MQTT explorer/dashboard");
+
+    QCommandLineOption configOption(QStringList() << "c"
+                                                  << "config",
+                                    QCoreApplication::translate("main", "Shows path to config file."));
+
+    parser.addOption(configOption);
+
     QCommandLineOption maxMessagesOpiton(QStringList() << "m"
                                                        << "max-messages",
-                                         QCoreApplication::translate("main", "Set message history limit"), QCoreApplication::translate("main", "count"));
+                                         QCoreApplication::translate("main", "Set message history limit."), QCoreApplication::translate("main", "count"));
 
     parser.addOption(maxMessagesOpiton);
     parser.process(app);
 
-    QString maxMessagesValue = parser.value(maxMessagesOpiton);
+    if (parser.isSet(configOption)) {
+        QSettings settings;
+        std::cout << settings.fileName().toStdString() << std::endl;
+        return 0;
+    }
 
+    QString maxMessagesValue = parser.value(maxMessagesOpiton);
     int maxMessages = 50; // defualt value
     if (!maxMessagesValue.isEmpty()) {
         bool ok;

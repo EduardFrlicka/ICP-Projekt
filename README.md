@@ -10,6 +10,7 @@ The application met all the requirements of the assignment.
 ```
 Options:
 -h, --help                 Displays help.
+-c, --config               Shows path to config file.
 -m, --max-messages <count> Set message history limit.
 ```
 

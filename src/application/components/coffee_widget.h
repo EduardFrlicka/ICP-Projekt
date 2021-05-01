@@ -34,6 +34,7 @@ class CoffeWidget : public QWidget, private Ui::CoffeWidget {
     QString name;
     QString topic;
     QString widgetID;
+    mqtt_client *client;
 
   public slots:
     /**

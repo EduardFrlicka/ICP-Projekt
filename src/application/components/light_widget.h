@@ -35,6 +35,7 @@ class LightWidget : public QWidget, private Ui::LightWidget {
     QString topic;
     QString widgetID;
     QByteArray state = "off";
+    mqtt_client *client;
 
   public slots:
     /**

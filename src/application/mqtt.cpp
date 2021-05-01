@@ -46,6 +46,14 @@ void mqtt_client::sendMessage(QByteArray msg) {
     }
 }
 
+void mqtt_client::sendMessage(QByteArray msg, QString topic) {
+    try {
+        this->client->publish(topic.toStdString(), msg.toStdString());
+    } catch (const mqtt::exception &exc) {
+        emit this->sendStatusText(exc.what());
+    }
+}
+
 int mqtt_client::subscribe(std::string topic) {
     try {
         auto subOpts = mqtt::subscribe_options(NO_LOCAL);

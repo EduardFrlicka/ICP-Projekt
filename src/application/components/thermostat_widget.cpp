@@ -16,6 +16,7 @@ ThermostatWidget::ThermostatWidget(QWidget *parent, mqtt_client *client, QString
     this->name = name;
     this->topic = topic;
     this->widgetID = widgetID;
+    this->client = client;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -45,6 +46,7 @@ void ThermostatWidget::addMessage(QByteArray msg, QString topicName) {
 }
 
 void ThermostatWidget::on_set_btn_clicked() {
+    client->sendMessage(QByteArray::fromStdString(std::to_string(this->temperature_input->value())), this->topic);
     emit this->sendMessage(QByteArray::fromStdString(std::to_string(this->temperature_input->value())), this->topic, 1);
 }
 

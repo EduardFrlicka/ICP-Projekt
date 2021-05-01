@@ -25,6 +25,7 @@ class ThermostatWidget : public QWidget, private Ui::ThermostatWidget {
     QString name;
     QString topic;
     QString widgetID;
+    mqtt_client *client;
 
   public slots:
     /**

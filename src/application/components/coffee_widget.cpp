@@ -16,6 +16,7 @@ CoffeWidget::CoffeWidget(QWidget *parent, mqtt_client *client, QString name, QSt
     this->name = name;
     this->topic = topic;
     this->widgetID = widgetID;
+    this->client = client;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -45,6 +46,7 @@ void CoffeWidget::addMessage(QByteArray msg, QString topicName) {
 }
 
 void CoffeWidget::on_set_btn_clicked() {
+    client->sendMessage("make", this->topic);
     emit this->sendMessage("make", this->topic, 1);
 }
 

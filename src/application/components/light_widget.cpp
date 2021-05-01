@@ -16,6 +16,7 @@ LightWidget::LightWidget(QWidget *parent, mqtt_client *client, QString name, QSt
     this->name = name;
     this->topic = topic;
     this->widgetID = widgetID;
+    this->client = client;
     this->name_text->setText(name);
     this->topic_text->setText(topic);
 
@@ -51,6 +52,7 @@ void LightWidget::on_switch_btn_clicked() {
     } else {
         this->state = "off";
     }
+    client->sendMessage(this->state, this->topic);
     emit this->sendMessage(this->state, this->topic, 1);
 }
 

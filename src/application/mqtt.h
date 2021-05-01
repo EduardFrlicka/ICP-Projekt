@@ -78,6 +78,14 @@ class mqtt_client : public QWidget {
     void sendMessage(QByteArray msg);
 
     /**
+     * @brief Send message to server
+     *
+     * @param msg data payload
+     * @param topic topic name
+     */
+    void sendMessage(QByteArray msg, QString topic);
+
+    /**
      * @brief Set current topic for message publising
      *
      * @param topic topic name

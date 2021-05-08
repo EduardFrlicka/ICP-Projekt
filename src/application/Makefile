@@ -6,7 +6,7 @@
 
 
 # Flags for compiling
-CFLAGS:=-std=c++17 -Wall -Wextra -pedantic -fPIC -fpermissive #-pthread
+CFLAGS:=-std=c++17 -Wall -Wextra -pedantic -fPIC #-fpermissive 
 CFLAGS+=$(patsubst -I%,-isystem %,$(shell pkg-config --cflags Qt5Widgets))
 
 LFLAGS:=-lpaho-mqtt3c -lpaho-mqtt3a -lpaho-mqttpp3 #-lGL -lpthread 
@@ -25,10 +25,7 @@ OBJ:=../../obj/application
 SRC:=.
 
 # Compiler
-CC:=g++
-MOC:=moc-qt5
-UIC:=uic-qt5
-RCC:=rcc-qt5
+CXX:=g++
 
 # Suffix of files to compile (E.x.: c, cpp, c++)
 SUFFIX=cpp
@@ -39,6 +36,14 @@ RM=rm -f
 
 # =========================================================================
 # initializing global variables
+
+QMAKE:=$(shell (qmake-qt5 -help 1>/dev/null 2>/dev/null  && echo "qmake-qt5") ||  (qmake -help 1>/dev/null 2>/dev/null && echo "qmake"))
+QT_BIN:=$(shell $(QMAKE) -query QT_HOST_BINS | sed -E 's/\/*$$//')
+
+MOC:=$(QT_BIN)/moc
+UIC:=$(QT_BIN)/uic
+RCC:=$(QT_BIN)/rcc
+
 BINARY_PATH=$(BIN)/$(BINARY_NAME)
 
 SRC_DIRECTORIES=$(shell find $(SRC) -type d)
@@ -78,7 +83,7 @@ run: $(BINARY_PATH)
 
 $(BINARY_PATH) : $(OBJECTS)
 	@mkdir -p $(@D)
-	$(CC)  $(OBJECTS) -o $@ $(LFLAGS)
+	$(CXX)  $(OBJECTS) -o $@ $(LFLAGS)
 
 $(OBJ)/%.h.cpp: %.h
 	@mkdir -p $(@D)
@@ -86,7 +91,7 @@ $(OBJ)/%.h.cpp: %.h
 
 $(OBJ)/%.h.o: $(OBJ)/%.h.cpp
 	@mkdir -p $(@D)
-	$(CC)  $< -c -o $@ $(CFLAGS) -I$(OBJ)
+	$(CXX)  $< -c -o $@ $(CFLAGS) -I$(OBJ)
 
 $(OBJ)/ui_%.h: %.ui
 	@mkdir -p $(@D)
@@ -94,11 +99,11 @@ $(OBJ)/ui_%.h: %.ui
 
 $(OBJ)/qrc_%.cpp: %.qrc
 	@mkdir -p $(@D)
-	$(RCC) -g cpp $< -o $@
+	$(RCC) $< -o $@
 
 $(OBJ)/%.o: %.$(SUFFIX) $(HEADERS) $(UI_H)
 	@mkdir -p $(@D)
-	$(CC)  $< -c -o $@ $(CFLAGS) $(IFLAGS)
+	$(CXX)  $< -c -o $@ $(CFLAGS) $(IFLAGS)
 
 source: ui
 	@echo "Source_Folders   : " $(SRC_DIRECTORIES)
@@ -108,6 +113,7 @@ source: ui
 	@echo "QRC              : " $(QRC)
 	@echo "Objects          : " $(OBJECTS) 
 	@echo "UI H             : " $(UI_H)
+	@echo "QMAKE            : " $(QMAKE)
 
 # =========================================================================
 # Cleaning rules

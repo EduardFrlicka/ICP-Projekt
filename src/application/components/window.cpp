@@ -118,6 +118,7 @@ void window::addMessage(QByteArray msg, QString topicName, int my_message) {
     // change background color on my message
     if (my_message) {
         item->setData(Qt::BackgroundRole, QColor(Qt::green));
+        item->setData(Qt::ForegroundRole, QColor(Qt::black));
     }
 
     QDateTime dateTime = dateTime.currentDateTime();
@@ -379,12 +380,12 @@ int window::addWidget(QString name, QString topic, int type, QString widgetID) {
 
     if (name.trimmed().size() == 0 || topic.trimmed().size() == 0) {
         setStatusBarText("Name and topic is required!");
-        return;
+        return false;
     }
 
     if (topic.contains("#")) {
         this->setStatusBarText("Character # is not supported in topic name");
-        return;
+        return false;
     }
 
     switch (type) {

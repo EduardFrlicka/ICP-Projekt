@@ -1,14 +1,15 @@
 # ICP project - variant 1: MQTT explorer/dashboard
 
-MQTT Explorer is a MQTT client that provides a structured overview of your MQTT topics.
-Dashboard allows you to create widgets for each device connected to a specific topic.
+MQTT Explorer is a MQTT client that provides a structured overview of your MQTT topics.  
+Dashboard allows you to create widgets for each device connected to a specific topic.  
 
 The application met all the requirements of the assignment.
 
 ## Usage
-
+App can be run by "make run" or by executing "app" binary in "bin" folder  
+Simulator can be run by executing "sim" binary from "bin" folder  
 ```
-Options:
+App Options:
 -h, --help                 Displays help.
 -c, --config               Shows path to config file.
 -m, --max-messages <count> Set message history limit.

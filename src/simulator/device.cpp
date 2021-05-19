@@ -1,10 +1,21 @@
+/**
+ * @file device.cpp
+ * @authors Peter Zdravecký, Eduard Frlička
+ * @brief Source file for devices. Declaring classes functions for simulator
+ * @version 0.1
+ * @date 2021-05-11
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+
+
 #include "device.h"
 
 string random_str(int len = 16) {
     string res = "";
     for (int i = 0; i < len; i++)
         res += "ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz0123456789_"[rand() % 62];
-    cout << res << endl;
     return res;
 }
 
@@ -38,41 +49,42 @@ basicDevice::basicDevice(int repeat, string address, string topic) {
     this->client->subscribe(topic, 0, subOpts)->wait();
 
     client->set_connection_lost_handler([this](const std::string &) { std::cout << "\n***Connection lost: " << this->address << " | Topic: " << this->topic << "***\n" << std::endl; });
-
-    // client->set_message_callback([this](mqtt::const_message_ptr msg) { this->callback(msg); });
-}
-
-void basicDevice::callback(mqtt::const_message_ptr msg) {
-    std::cout << "Došla sprava: " << msg->to_string() << std::endl;
 }
 
 void deviceThermostat::callback(mqtt::const_message_ptr msg) {
     this->target = stoi(msg->to_string());
-    client->publish(this->topic, to_string(this->status));
-    // std::cout << "Došla sprava thermostat: " << msg->to_string() << std::endl;
-    // std::cout << "Target nastaveny na: " << this->target << std::endl;
+    try {
+        client->publish(this->topic, to_string(this->status));
+    } catch (const mqtt::exception &exc) {
+    }
 }
 
 void deviceThermostat::update() {
-    // cout << "status: " << this->status << " target: " << this->target << " res: " << ((this->status) < (this->target) - (this->status) > (this->target)) << endl;
     this->status += ((this->status) < (this->target)) - ((this->status) > (this->target));
 }
 
 void deviceThermostat::send_message() {
     update();
-    // cout << "thermostat: " << this->status << endl;
-    client->publish(this->topic, to_string(this->status));
+    try {
+        client->publish(this->topic, to_string(this->status));
+    } catch (const mqtt::exception &exc) {
+    }
 }
 
 void deviceLights::callback(mqtt::const_message_ptr msg) {
     std::cout << "Došla sprava: " << msg->to_string() << std::endl;
-    this->status="on"==msg->to_string();
-    client->publish(this->topic, "turning lights " + this->messages[this->status]);
+    this->status = "on" == msg->to_string();
+    try {
+        client->publish(this->topic, "turning lights " + this->messages[this->status]);
+    } catch (const mqtt::exception &exc) {
+    }
 }
 
 void deviceLights::send_message() {
-    // cout << "lights: " << this->status << endl;
-    client->publish(this->topic, this->messages[this->status]);
+    try {
+        client->publish(this->topic, this->messages[this->status]);
+    } catch (const mqtt::exception &exc) {
+    }
 }
 
 void deviceCofeeMachine::update() {
@@ -83,14 +95,19 @@ void deviceCofeeMachine::update() {
 void deviceCofeeMachine::callback(mqtt::const_message_ptr msg) {
     std::cout << "Došla sprava: " << msg->to_string() << std::endl;
     if (this->status) {
-        client->publish(this->topic, "Busy");
+        try {
+            client->publish(this->topic, "Busy");
+        } catch (const mqtt::exception &exc) {
+        }
         return;
     }
     this->status = 1;
 }
 
 void deviceCofeeMachine::send_message() {
-    // cout << "cofee: " << this->status << endl;
-    client->publish(this->topic, this->messages[this->status]);
+    try {
+        client->publish(this->topic, this->messages[this->status]);
+    } catch (const mqtt::exception &exc) {
+    }
     update();
 }

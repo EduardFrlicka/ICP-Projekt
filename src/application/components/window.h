@@ -97,11 +97,30 @@ class window : public QMainWindow, private Ui::window {
      */
     void loadConfig();
 
-    // ede okomentuj
+    /**
+     * @brief adds treeWidget representing topic represented by parameter topicName,
+     *  If there is '/' in topic name, first searches for "parent" topic node, then created treeWidget
+     *  (or more if needed)
+     *
+     * @param topicName representing name of topic. '/' using as delimiter for parent topics
+     */
     void addNewTopic(QString topicName);
-    // ede okomentuj
+
+    /**
+     * @brief Searches for topic node represented by topicName parameter. If node not found, returns NULL
+     *
+     * @param topicName representing name of topic. '/' using as delimiter for parent topics
+     */
     QTreeWidgetItem *findTopic(QString topicName);
-    // ede okomentuj
+   
+    /**
+     * @brief Searches for lowest topic node represented by topicName parameter. If node not found, returns NULL
+     *
+     * @param topicName representing name of topic. '/' using as delimiter for parent topics
+     *
+     * @param i pointer to index. After function ends, is set to index of topic name, for which was node found
+     */
+
     QTreeWidgetItem *findTopicRecursive(QString topicName, int *i);
 
     /**
